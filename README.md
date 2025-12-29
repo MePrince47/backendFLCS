@@ -1,1 +1,201 @@
 # backendFLCS
+
+# 🎓 GESTION_FLCS – API de gestion des élèves
+
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Security](https://img.shields.io/badge/Security-JWT-red)
+
+## 📌 Description
+
+**GESTION_FLCS** est une **API REST sécurisée** développée avec **Spring Boot**, destinée à la gestion administrative et pédagogique des élèves d’un centre de formation linguistique.
+
+L’application permet :
+- la gestion des **élèves**
+- la gestion des **rentrées**
+- la gestion des **niveaux linguistiques**
+- la gestion des **partenaires**
+- la gestion des **utilisateurs** avec rôles
+- une **recherche avancée multi-critères**
+- une **sécurité basée sur JWT**
+
+Ce projet a été conçu avec des **bonnes pratiques professionnelles backend** (DTO, sécurité, séparation des couches, pagination, etc.).
+
+---
+
+## 🛠️ Technologies utilisées
+
+- **Java 17**
+- **Spring Boot 3**
+- **Spring Data JPA**
+- **Spring Security + JWT**
+- **PostgreSQL**
+- **Hibernate**
+- **Lombok**
+- **Maven**
+- **Swagger (OpenAPI)** *(optionnel si activé)*
+
+---
+
+## 🏗️ Architecture du projet
+
+```text
+src/main/java/FLCS/GESTION
+│
+├── CONFIG          # Configuration (sécurité, initialisation)
+├── CONTROLLER      # API REST (Endpoints)
+├── DTO             # Objets de transfert (Request / Response)
+├── ENTITEES        # Entités JPA
+├── EXCEPTION       # Gestion centralisée des erreurs
+├── REPOSITORY      # Accès base de données
+├── SECURITY        # JWT, UserDetails, filtres
+├── SERVICE         # Logique métier
+
+```
+# 🔐 Sécurité & rôles
+
+L’API est sécurisée avec JWT.
+
+## 👤 Rôles disponibles
+
+- **ADMIN**  
+- **SECRETAIRE**  
+- **ENSEIGNANT**
+
+## 🔒 Accès aux fonctionnalités
+
+| Fonctionnalité       | ADMIN | SECRETAIRE | ENSEIGNANT |
+|---------------------|:-----:|:----------:|:----------:|
+| Créer un élève       | ✅    | ✅         | ❌         |
+| Modifier un élève    | ✅    | ✅         | ❌         |
+| Supprimer un élève   | ✅    | ✅         | ❌         |
+| Lire les élèves      | ✅    | ✅         | ✅         |
+| Recherche avancée    | ✅    | ✅         | ✅         |
+
+## 📦 Modèle métier (simplifié)
+
+### Eleve
+- nom, prénom, date de naissance  
+- niveau scolaire  
+- statut  
+- partenaire  
+- rentree  
+- niveau linguistique  
+
+### Rentree
+- nom (ex: `SEPTEMBRE_2024`)  
+- création automatique de niveaux  
+
+### Niveau
+- code (A1, A2, B1, B2…)  
+- lié à une rentrée  
+
+### Partenaire
+- nom unique  
+
+## 🔍 Recherche avancée
+
+La recherche avancée permet de filtrer les élèves sans obligation de fournir tous les paramètres.
+
+**Paramètres possibles :**  
+`nom`, `niveauScolaire`, `niveauLangue`, `rentree`, `partenaire`
+
+**Exemple :**
+GET /api/eleves/search?niveauLangue=B1&partenaire=FLCS
+
+**Réponse standardisée :**
+```json
+{
+  "count": 2,
+  "message": "2 élément(s) trouvé(s)",
+  "data": [
+    {
+      "id": 1,
+      "nom": "MIKAM FOKOUA",
+      "prenom": "Borel",
+      "niveauLangue": "B1",
+      "rentree": "SEPTEMBRE_2024",
+      "partenaire": "FLCS"
+    }
+  ]
+}
+```
+## 📄 Utilisation des DTO
+
+- Les entités JPA **ne sont jamais exposées** directement.  
+- Les réponses utilisent **EleveResponse**.  
+- Les créations utilisent **EleveRequest**.  
+
+**Résultat :** sécurité, stabilité de l’API et facilité pour le frontend.
+
+---
+
+## 🧪 Exemples de requêtes JSON
+
+### ➕ Créer un partenaire
+```json
+{
+  "nomPartenaire": "FLCS"
+}
+```
+### ➕ Créer une rentrée
+```json
+{
+  "nomRentree": "SEPTEMBRE_2024"
+}
+```
+### ➕ Créer un élève
+```json
+{
+  "nom": "MIKAM FOKOUA",
+  "prenom": "Borel",
+  "dateNaiss": "2012-05-14",
+  "niveauScolaire": "BAC",
+  "typeProcedure": "AUSBILDUNG",
+  "telCandidat": "690112233",
+  "telParent": "677889900",
+  "statut": "ACTIF",
+  "nomPartenaire": "FLCS",
+  "codeNiveau": "B1"
+}
+```
+## ⚙️ Installation & lancement
+
+### Prérequis
+- Java 17+  
+- Maven  
+- PostgreSQL  
+
+### Configuration
+Dans `application.yml` ou `application.properties` :
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/gestion_flcs
+spring.datasource.username=postgres
+spring.datasource.password=ton mdp
+```
+### Lancer l’application
+```bash
+mvn clean spring-boot:run
+```
+## 📌 Bonnes pratiques appliquées
+
+- Séparation Controller / Service / Repository  
+- DTO pour les échanges API  
+- Gestion centralisée des exceptions  
+- Sécurité JWT  
+- Transactions maîtrisées (`@Transactional`)  
+- Code lisible et maintenable
+- Tests unitaires éffectués 
+
+---
+
+## 🚀 Évolutions possibles
+
+- Pagination & tri avancés
+- Finalisation de la sécurité JWT( pour l'instant Basic Auth) 
+- Swagger / OpenAPI  
+- Tests d’intégration  
+- Statistiques et tableaux de bord  
+- Déploiement Docker
