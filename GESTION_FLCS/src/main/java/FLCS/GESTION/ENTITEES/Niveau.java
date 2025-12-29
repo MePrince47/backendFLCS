@@ -6,6 +6,10 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
 @Entity
 @Data              // Génère getters, setters, toString, equals, hashCode
 @NoArgsConstructor // Génère un constructeur sans arguments
@@ -17,10 +21,13 @@ public class Niveau {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nomNiveau; // A1, A2, B1, B2, C1
-    private String typeNiveau; // RENTREE / INDEPENDANT
-
-    @ManyToOne
+    @Column(nullable = false)
+    private String code; // A1, A2, B1, B2, C1
+    
+    //  Un niveau peut exister sans rentree
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
+    @JsonBackReference
     private Rentree rentree;
 }
 

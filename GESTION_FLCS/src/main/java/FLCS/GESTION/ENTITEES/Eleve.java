@@ -2,6 +2,7 @@ package FLCS.GESTION.ENTITEES;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,15 +18,27 @@ public class Eleve {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Le nom est obligatoire")
     private String nom;
-    private String prenom;
-    private LocalDate dateNaiss;
 
+    @NotBlank(message = "Le prénom est obligatoire")
+    private String prenom;
+
+    // format YYYY-MM-DD
+    @NotNull(message = "La date de naissance est obligatoire")
+    @Past(message = "La date de naissance doit être dans le passé")
+    private LocalDate dateNaiss;
+    
+    @NotBlank
     private String niveauScolaire;
-    private String niveauLangue;
+
+    @NotBlank
     private String typeProcedure;
+    @NotBlank
     private String telCandidat;
+    @NotBlank
     private String telParent;
+    @NotBlank
     private String statut;
 
     @ManyToOne
@@ -33,4 +46,9 @@ public class Eleve {
 
     @ManyToOne
     private Rentree rentree;
+
+    @ManyToOne
+    @JoinColumn(name = "niveau_id")
+    private Niveau niveauLangue;
+
 }
