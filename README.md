@@ -55,7 +55,13 @@ src/main/java/FLCS/GESTION
 ```
 # 🔐 Sécurité & rôles
 
-L’API est sécurisée avec JWT.
+## Authentification
+
+- Basic Auth
+- Utilisateurs stockés en base de données
+- Mots de passe encodés avec BCrypt
+  
+ L’API sera sécurisée avec JWT.
 
 ## 👤 Rôles disponibles
 
