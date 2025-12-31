@@ -6,9 +6,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import FLCS.GESTION.Dtos.Request.NiveauRequest;
+
 @Entity
 @Table(name = "niveaux")
-// @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @ToString(exclude = {"rentree", "eleves", "enseignant", "evaluations", "endpruefungen"})
 public class Niveau extends BaseEntity {
     
@@ -57,6 +60,14 @@ public class Niveau extends BaseEntity {
     }
     
     public boolean estComplet() {
-        return eleves.size() >= 25; // Capacité par défaut
+        if (this.eleves == null) return false;
+        int capacite = 25;
+        return eleves.size() >= capacite;
     }
+
+    public void setCapaciteMax(Integer capaciteMax) {
+       this.setCapaciteMax(capaciteMax);
+    }
+    
+
 }

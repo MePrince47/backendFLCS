@@ -54,4 +54,6 @@ public class Rentree extends BaseEntity {
             throw new IllegalArgumentException("La date de fin doit être après la date de début");
         }
     }
+
+ 
 }

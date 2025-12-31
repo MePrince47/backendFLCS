@@ -1,5 +1,6 @@
 package FLCS.GESTION.Repository;
 
+import FLCS.GESTION.Models.Eleve;
 import FLCS.GESTION.Models.EvaluationHebdomadaire;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,8 @@ public interface EvaluationHebdomadaireRepository extends JpaRepository<Evaluati
     @Query("SELECT AVG((e.noteLesen + e.noteHoren + e.noteSchreiben + e.noteGrammatik + e.noteSprechen) / 5) " +
            "FROM EvaluationHebdomadaire e WHERE e.eleve.id = :eleveId AND e.niveau.id = :niveauId")
     Double calculateMoyenneGlobale(Long eleveId, Long niveauId);
+
+    boolean existsByEleveIdAndNiveauIdAndSemaineAndAnnee(Long eleveId, Long niveauId, Integer semaine, Integer annee);
+
+    Optional<Eleve> findBySemaineAndAnnee(Integer semaine, Integer annee);
 }

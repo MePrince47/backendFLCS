@@ -1,6 +1,7 @@
 package FLCS.GESTION.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import FLCS.GESTION.Models.Niveau;
@@ -15,7 +16,7 @@ public interface NiveauRepository extends JpaRepository<Niveau, Long> {
     
     List<Niveau> findByNom(String nom);
     
-    Optional<Niveau> findByRentreeIdAndNom(Long rentreeId, String nom);
+    Optional<Niveau> findByRentreeIdAndNom(Long rentreeId, Object nom);
     
     List<Niveau> findByEnseignantId(Long enseignantId);
     
@@ -24,4 +25,7 @@ public interface NiveauRepository extends JpaRepository<Niveau, Long> {
     
     @Query("SELECT COUNT(e) FROM Eleve e WHERE e.niveau.id = :niveauId")
     Long countElevesByNiveauId(Long niveauId);
+    
+    @Query("SELECT COUNT(n) FROM Niveau n WHERE n.rentree.id = :rentreeId")
+    Long countByRentreeId(@Param("rentreeId") Long rentreeId);
 }

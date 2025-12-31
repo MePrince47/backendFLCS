@@ -47,4 +47,12 @@ public class Enseignant extends BaseEntity {
     public enum Statut {
         ACTIF, INACTIF, CONGE
     }
+
+    public String getNom() {
+        return this.nom;
+       
+    }
+
+
+ 
 }

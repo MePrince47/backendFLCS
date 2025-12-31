@@ -40,4 +40,6 @@ public class Partenaire extends BaseEntity {
     public enum Statut {
         ACTIF, INACTIF
     }
+
+   
 }

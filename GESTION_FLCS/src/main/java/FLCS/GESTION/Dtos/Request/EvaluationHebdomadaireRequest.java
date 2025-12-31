@@ -40,4 +40,15 @@ public class EvaluationHebdomadaireRequest {
     @DecimalMax(value = "20.0", message = "La note Sprechen doit être entre 0 et 20")
     private Double noteSprechen;
 
+    public Object getNumeroLecon() {
+        
+        throw new UnsupportedOperationException("Unimplemented method 'getNumeroLecon'");
+    }
+
+
+    public Object getDateEvaluation() {
+       
+        throw new UnsupportedOperationException("Unimplemented method 'getDateEvaluation'");
+    }
+
 }

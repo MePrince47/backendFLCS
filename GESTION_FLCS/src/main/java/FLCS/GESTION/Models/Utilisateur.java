@@ -37,4 +37,7 @@ public class Utilisateur extends BaseEntity {
     public enum Statut {
         ACTIF, INACTIF
     }
+
+ 
+
 }

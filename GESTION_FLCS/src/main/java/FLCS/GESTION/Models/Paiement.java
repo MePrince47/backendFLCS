@@ -40,6 +40,9 @@ public class Paiement extends BaseEntity {
     public enum Statut {
         VALIDE, ANNULE
     }
+
+  
+  
     
     // @PostPersist
     // @PostUpdate
@@ -60,5 +63,5 @@ public class Paiement extends BaseEntity {
     //             eleve.setStatutPaiement(Eleve.StatutPaiement.NON_PAYE);
     //         }
     //     }
-    // }
+//     // }
 }

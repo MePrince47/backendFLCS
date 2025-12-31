@@ -15,13 +15,17 @@ public interface EndpruefungRepository extends JpaRepository<Endpruefung, Long> 
     
     List<Endpruefung> findByNiveauId(Long niveauId);
     
-    Optional<Endpruefung> findByEleveIdAndNiveauId(Long eleveId, Long niveauId);
+    Optional<Endpruefung> findByEleveIdAndNiveauId(Object eleveId, Object niveauId);
     
     List<Endpruefung> findByResultat(Endpruefung.Resultat resultat);
     
+    //conte le nombre d examen ayant ete valider par niveau
     @Query("SELECT COUNT(e) FROM Endpruefung e WHERE e.niveau.id = :niveauId AND e.resultat = 'ADMIS'")
     Long countAdmisByNiveauId(Long niveauId);
     
+    //donne la moyennne de l examen final par niveau
     @Query("SELECT AVG(e.moyenneExamen) FROM Endpruefung e WHERE e.niveau.id = :niveauId")
     Double calculateMoyenneExamenByNiveau(Long niveauId);
+
+    // boolean findByEleveIdAndNiveauId(Object eleveId, Object niveauId);
 }
