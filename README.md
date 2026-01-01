@@ -1,79 +1,107 @@
-📖 Description du Projet
-FLCS Gestion est un système complet de gestion pédagogique développé pour le Centre FLCS qui accompagne des candidats souhaitant partir en Allemagne pour leurs études, formation professionnelle ou travail.
 
-Le système permet de gérer :
+FLCS - Backend Pédagogique / Gestion des Notes
+📌 Contexte
+Ce module fait partie du système de gestion FLCS (Formation Linguistique et Accompagnement vers l'Allemagne). Il gère les aspects pédagogiques du logiciel, notamment la gestion des évaluations hebdomadaires, des examens finaux, et la génération des bulletins de notes.
 
-✅ Les candidats/élèves et leurs informations
+🎯 Objectifs
+Centraliser la gestion des évaluations pédagogiques
 
-✅ Les formations linguistiques (niveaux A1 à C1)
+Automatiser le calcul des moyennes selon les règles métier
 
-✅ Les évaluations hebdomadaires et examens finaux
+Générer des bulletins de notes en PDF
 
-✅ Les paiements et partenaires
+Fournir des statistiques de réussite par niveau
 
-✅ La génération de rapports et bulletins
+📋 Fonctionnalités implémentées
+1. Modélisation de la Base de Données
+EvaluationHebdomadaire : Stocke les 5 notes hebdomadaires (Lesen, Hören, Schreiben, Sprechen, Grammatik)
 
-✅ Le suivi administratif des dossiers de visa
+Endprüfung : Stocke les notes de l'examen final avec calcul automatique de la moyenne
 
-✨ Fonctionnalités
-🎓 Module Candidats
-Enregistrement complet des candidats
+2. API CRUD Rentrée/Niveau
+POST /api/rentrees : Création d'une nouvelle rentrée
 
-Recherche avancée (nom, partenaire, niveau, statut)
+Fonctionnalité : Génération automatique des niveaux A1, A2, B1, B2 à la création
 
-Suivi du statut (formation, procédure, visa)
+3. API Saisie des Notes Hebdomadaires
+POST /api/evaluations-hebdo : Enregistrement des 5 notes hebdomadaires
 
-Historique complet des parcours
+Précision : Pas de calcul de moyenne immédiat (selon spécifications)
 
-📚 Module Formation Linguistique
-Gestion des rentrées (cohortes)
+4. API Génération PDF
+GET /api/bulletins/{eleveId}/{niveauId}/pdf : Génère et télécharge le bulletin de notes en PDF
 
-Création automatique des niveaux A1, A2, B1, B2
+Format : PDF structuré avec tableau des notes et moyenne finale
 
-Suivi de progression par leçons (14 leçons/niveau)
+Calcul : Moyenne adaptée selon le niveau (A1/A2 vs B1/B2)
 
-Gestion des horaires et salles
+5. API Statistiques Pédagogiques
+GET /api/statistiques/reussite-par-niveau : Retourne le pourcentage de réussite/échec par niveau
 
-📊 Module Évaluations
-Évaluations Hebdomadaires
-Saisie des 5 notes : Lesen, Hören, Schreiben, Grammatik, Sprechen
+Métrique : Taux de réussite basé sur un seuil de 10/20
 
-Pas de calcul de moyenne en base (selon spécification)
+🏗️ Architecture Technique
+Technologies utilisées
+Langage : Java 17
 
-Validation par les enseignants
+Framework : Spring Boot 3.x
 
-Examen Final (Endprüfung)
-Calcul automatique des moyennes
+Base de données : PostgreSQL
 
-Formules différentes par niveau :
+ORM : JPA/Hibernate
 
-A1/A2 : 40% moyenne hebdo + 60% examen
+Génération PDF : iText 7
 
-B1/B2 : 100% examen
+Authentification : Spring Security (à intégrer)
 
-Génération automatique des résultats
+Structure des packages
+text
+com.flcs.pedagogie/
+├── controller/
+│   ├── RentreeController.java
+│   ├── EvaluationHebdoController.java
+│   ├── BulletinController.java
+│   └── StatistiqueController.java
+├── entity/
+│   ├── EvaluationHebdomadaire.java
+│   └── Endprüfung.java
+├── service/
+│   ├── RentreeService.java
+│   ├── EvaluationHebdoService.java
+│   └── EndprüfungService.java
+├── repository/
+│   ├── EvaluationHebdoRepository.java
+│   └── EndprüfungRepository.java
+└── dto/
+    └── EvaluationHebdomadaireDto.java
+    
+🔧 Règles Métier Implémentées
+1. Gestion des niveaux
+Deux types de niveaux : "rentrée" (A1 à B2) et "indépendant" (C1, etc.)
 
-💰 Module Paiements
-Enregistrement des transactions
+Les niveaux A1, A2, B1, B2 sont générés automatiquement lors de la création d'une rentrée
 
-Suivi des montants reçus
+2. Calcul des moyennes
+Pour A1 et A2 :
 
-Association aux partenaires
+text
+Moyenne finale = 40% moyenne hebdomadaire + 60% Endprüfung
+Pour B1 et B2 :
 
-Génération de reçus
+text
+Moyenne finale = 100% Endprüfung
+Endprüfung : Moyenne automatique des 5 notes
 
-📈 Module Rapports
-Bulletins de notes
+3. Évaluations hebdomadaires
+5 notes à saisir chaque semaine
 
-Statistiques de réussite
+Pas de moyenne hebdomadaire enregistrée
 
-Rapports financiers
+Historique conservé pour chaque élève
 
-Tableaux de bord personnalisés
-
-⚙️ Module Administration
-Gestion des utilisateurs (Admin, Enseignant, Secrétaire)
-
-Configuration du système
-
-Sauvegarde et restauration des données
+📊 Points d'API
+Méthode	Endpoint	Description	Rôle requis
+POST	/api/rentrees	Crée une rentrée avec ses niveaux	Admin
+POST	/api/evaluations-hebdo	Enregistre notes hebdomadaires	Enseignant
+GET	/api/bulletins/{eleveId}/{niveauId}/pdf	Génère bulletin PDF	Enseignant/Secrétaire
+GET	/api/statistiques/reussite-par-niveau	Statistiques par niveau	Direction
