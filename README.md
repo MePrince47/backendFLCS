@@ -1,3 +1,4 @@
+
 📖 Description du Projet
 FLCS Gestion est un système complet de gestion pédagogique développé pour le Centre FLCS qui accompagne des candidats souhaitant partir en Allemagne pour leurs études, formation professionnelle ou travail.
 genere le fichier readme.md  de cette partie du devoir
@@ -97,9 +98,7 @@ Endprüfung : Moyenne automatique des 5 notes
 3. Évaluations hebdomadaires
 5 notes à saisir chaque semaine
 
-Pas de moyenne hebdomadaire enregistrée
 
-Historique conservé pour chaque élève
 
 📊 Points d'API
 Méthode	Endpoint	Description	Rôle requis
