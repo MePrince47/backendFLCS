@@ -1,7 +1,7 @@
 
 📖 Description du Projet
 FLCS Gestion est un système complet de gestion pédagogique développé pour le Centre FLCS qui accompagne des candidats souhaitant partir en Allemagne pour leurs études, formation professionnelle ou travail.
-genere le fichier readme.md  de cette partie du devoir
+
 FLCS - Backend Pédagogique / Gestion des Notes
 📌 Contexte
 Ce module fait partie du système de gestion FLCS (Formation Linguistique et Accompagnement vers l'Allemagne). Il gère les aspects pédagogiques du logiciel, notamment la gestion des évaluations hebdomadaires, des examens finaux, et la génération des bulletins de notes.
