@@ -1,18 +1,19 @@
 package FLCS.GESTION.Mappers;
+
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import FLCS.GESTION.Dtos.Request.NiveauRequest;
 import FLCS.GESTION.Dtos.response.NiveauResponse;
-import FLCS.GESTION.Models.Niveau;
-import FLCS.GESTION.Models.Rentree;
+import FLCS.GESTION.Entitees.Niveau;
+import FLCS.GESTION.Entitees.Rentree;
 
 import java.util.List;
 
 @Component
 // @Mapper(componentModel = "spring", uses = { RentreeMapper.class,
-        // EnseignantMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+// EnseignantMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class NiveauMapper {
 
     @Autowired
@@ -72,10 +73,10 @@ public abstract class NiveauMapper {
     }
 
     @Named("enseignantIdToEntity")
-    public FLCS.GESTION.Models.Enseignant enseignantIdToEntity(Long enseignantId) {
+    public FLCS.GESTION.Entitees.Enseignant enseignantIdToEntity(Long enseignantId) {
         if (enseignantId == null)
             return null;
-        FLCS.GESTION.Models.Enseignant enseignant = new FLCS.GESTION.Models.Enseignant();
+        FLCS.GESTION.Entitees.Enseignant enseignant = new FLCS.GESTION.Entitees.Enseignant();
         enseignant.setId(enseignantId);
         return enseignant;
     }
@@ -99,9 +100,9 @@ public abstract class NiveauMapper {
     }
 
     // protected boolean isNiveauComplet(Niveau niveau) {
-    //     if (niveau.getEleves() == null || niveau.getCapaciteMax() == null) {
-    //         return false;
-    //     }
-    //     return niveau.getEleves().size() >= niveau.getCapaciteMax();
+    // if (niveau.getEleves() == null || niveau.getCapaciteMax() == null) {
+    // return false;
+    // }
+    // return niveau.getEleves().size() >= niveau.getCapaciteMax();
     // }
 }

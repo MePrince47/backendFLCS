@@ -1,5 +1,5 @@
 // entity/EvaluationHebdomadaire.java
-package FLCS.GESTION.Models;
+package FLCS.GESTION.Entitees;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +7,10 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * Évaluation hebdomadaire d'un élève pour un niveau donné.
+ * Contient les notes par compétence et calcule la moyenne.
+ */
 @Entity
 @Table(name = "evaluations_hebdomadaires")
 @Getter

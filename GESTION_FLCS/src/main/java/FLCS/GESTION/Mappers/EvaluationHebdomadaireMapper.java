@@ -4,15 +4,17 @@ import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 import FLCS.GESTION.Dtos.Request.EvaluationHebdomadaireRequest;
-import FLCS.GESTION.Models.Eleve;
-import FLCS.GESTION.Models.Enseignant;
-import FLCS.GESTION.Models.EvaluationHebdomadaire;
-import FLCS.GESTION.Models.Niveau;
+import FLCS.GESTION.Entitees.Eleve;
+import FLCS.GESTION.Entitees.Enseignant;
+import FLCS.GESTION.Entitees.EvaluationHebdomadaire;
+import FLCS.GESTION.Entitees.Niveau;
 
 import java.util.List;
 
 @Component
-// @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+// @Mapper(componentModel = "spring", unmappedTargetPolicy =
+// ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy =
+// NullValuePropertyMappingStrategy.IGNORE)
 public abstract class EvaluationHebdomadaireMapper {
 
     // Request → Entity
@@ -86,6 +88,5 @@ public abstract class EvaluationHebdomadaireMapper {
         enseignant.setId(enseignantId);
         return enseignant;
     }
-
 
 }

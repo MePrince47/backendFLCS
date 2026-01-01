@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import FLCS.GESTION.Dtos.Request.NiveauRequest;
 import FLCS.GESTION.Dtos.response.NiveauResponse;
-import FLCS.GESTION.Models.Eleve;
-import FLCS.GESTION.Models.Enseignant;
-import FLCS.GESTION.Models.Niveau;
-import FLCS.GESTION.Models.Rentree;
+import FLCS.GESTION.Entitees.Eleve;
+import FLCS.GESTION.Entitees.Enseignant;
+import FLCS.GESTION.Entitees.Niveau;
+import FLCS.GESTION.Entitees.Rentree;
 import FLCS.GESTION.Repository.EleveRepository;
 import FLCS.GESTION.Repository.EnseignantRepository;
 import FLCS.GESTION.Repository.NiveauRepository;
@@ -48,19 +48,7 @@ public class NiveauServiceImpl implements NiveauService {
 
         // Créer le niveau
         Niveau niveau = new Niveau();
-        // .nom(request.getNom())
-        // .type(Niveau.TypeNiveau.valueOf(request.getType().toUpperCase()))
-        // .rentree(rentree)
-        // .enseignant(enseignant)
-        // .salle(request.getSalle())
-        // .capaciteMax(request.getCapaciteMax() != null ? request.getCapaciteMax() :
-        // 25)
-        // .fraisInscription(request.getFraisInscription() != null ?
-        // request.getFraisInscription() : 0.0)
-        // .fraisFormation(request.getFraisFormation() != null ?
-        // request.getFraisFormation() : 0.0)
-        // .statut(Niveau.Statut.PLANIFIE)
-        // .build();
+        ;
 
         Niveau savedNiveau = niveauRepository.save(niveau);
         log.info("Niveau créé avec succès: ID={}, Nom={}", savedNiveau.getId(), savedNiveau.getNom());
@@ -68,16 +56,10 @@ public class NiveauServiceImpl implements NiveauService {
         return mapToResponse(savedNiveau);
     }
 
-    @Override
     @Transactional
     public NiveauResponse updateNiveau(Long id, NiveauRequest request) {
-        Niveau niveau = null;
-        try {
-            niveau = niveauRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé avec ID: " + id));
-        } catch (RelationNotFoundException e) {
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé avec ID: " + id));
 
         // Vérifier si le nom est modifié et s'il existe déjà dans cette rentrée
         if (!niveau.getNom().equals(request.getNom())) {
@@ -91,13 +73,8 @@ public class NiveauServiceImpl implements NiveauService {
 
         // Vérifier la rentrée si modifiée
         if (!niveau.getRentree().getId().equals(request.getRentreeId())) {
-            Rentree nouvelleRentree = null;
-            try {
-                nouvelleRentree = rentreeRepository.findById(request.getRentreeId())
-                        .orElseThrow(() -> new RelationNotFoundException("Rentrée non trouvée"));
-            } catch (RelationNotFoundException e) {
-                e.printStackTrace();
-            }
+            Rentree nouvelleRentree = rentreeRepository.findById(request.getRentreeId())
+                    .orElseThrow(() -> new IllegalArgumentException("Rentrée non trouvée"));
             niveau.setRentree(nouvelleRentree);
         }
 
@@ -115,14 +92,8 @@ public class NiveauServiceImpl implements NiveauService {
     @Override
     @Transactional
     public void deleteNiveau(Long id) {
-        Niveau niveau = null;
-        try {
-            niveau = niveauRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé avec ID: " + id));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé avec ID: " + id));
 
         // Vérifier si le niveau a des élèves
         List<Eleve> nombreEleves = eleveRepository.findByNiveauId(id);
@@ -152,13 +123,8 @@ public class NiveauServiceImpl implements NiveauService {
     @Override
     public List<NiveauResponse> getNiveauxByRentree(Long rentreeId) {
         // Vérifier que la rentrée existe
-        try {
-            rentreeRepository.findById(rentreeId)
-                    .orElseThrow(() -> new RelationNotFoundException("Rentrée non trouvée"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        rentreeRepository.findById(rentreeId)
+                .orElseThrow(() -> new IllegalArgumentException("Rentrée non trouvée"));
 
         return niveauRepository.findByRentreeId(rentreeId).stream()
                 .map(this::mapToResponse)
@@ -168,14 +134,8 @@ public class NiveauServiceImpl implements NiveauService {
     @Override
     @Transactional
     public NiveauResponse assignerEnseignant(Long niveauId, Long enseignantId) {
-        Niveau niveau = null;
-        try {
-            niveau = niveauRepository.findById(niveauId)
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(niveauId)
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé"));
 
         // niveau.setEnseignant(enseignant);
         Niveau updatedNiveau = niveauRepository.save(niveau);
@@ -219,14 +179,8 @@ public class NiveauServiceImpl implements NiveauService {
 
     @Override
     public boolean estComplet(Long niveauId) {
-        Niveau niveau = null;
-        try {
-            niveau = niveauRepository.findById(niveauId)
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé avec ID: " + niveauId));
-        } catch (RelationNotFoundException e) {
-        
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(niveauId)
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé avec ID: " + niveauId));
         return niveau.estComplet();
     }
 
@@ -237,15 +191,15 @@ public class NiveauServiceImpl implements NiveauService {
     }
 
     @Override
-    public NiveauResponse updateNiveau(Long id, NiveauResponse niveauResponse) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateNiveau'");
-    }
-
-    @Override
     public NiveauResponse createNiveau(NiveauResponse niveauResponse) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createNiveau'");
+    }
+
+    @Override
+    public NiveauResponse updateNiveau(Long id, NiveauResponse niveauResponse) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateNiveau'");
     }
 
 }

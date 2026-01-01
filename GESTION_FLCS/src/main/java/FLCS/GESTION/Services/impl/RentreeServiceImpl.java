@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import FLCS.GESTION.Dtos.Request.RentreeRequest;
 import FLCS.GESTION.Dtos.response.RentreeResponse;
-import FLCS.GESTION.Models.Niveau;
-import FLCS.GESTION.Models.Rentree;
+import FLCS.GESTION.Entitees.Niveau;
+import FLCS.GESTION.Entitees.Rentree;
 import FLCS.GESTION.Repository.NiveauRepository;
 import FLCS.GESTION.Repository.RentreeRepository;
 import FLCS.GESTION.Services.RentreeService;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RentreeServiceImpl implements RentreeService {
 
-    private final RentreeRepository rentreeRepository = null;
-    private final NiveauRepository niveauRepository = null;
+    private final RentreeRepository rentreeRepository;
+    private final NiveauRepository niveauRepository;
 
     @Override
     @Transactional
@@ -61,7 +61,7 @@ public class RentreeServiceImpl implements RentreeService {
     @Transactional
     public void creerNiveauxPourRentree(Long rentreeId) {
         Rentree rentree = rentreeRepository.findById(rentreeId)
-                .orElseThrow(() -> new ResolutionException("Rentrée non trouvée"));
+                .orElseThrow(() -> new IllegalArgumentException("Rentrée non trouvée"));
 
         List<String> nomsNiveaux = Arrays.asList("A1", "A2", "B1", "B2", "C1");
 
@@ -69,10 +69,12 @@ public class RentreeServiceImpl implements RentreeService {
             // Vérifier si le niveau existe déjà
             if (niveauRepository.findByRentreeIdAndNom(rentreeId, nomNiveau).isEmpty()) {
                 Niveau niveau = new Niveau();
-                // niveau.setNom(nomNiveau);
-                // niveau.setType(Niveau.TypeNiveau.RENTREE);
-                // niveau.setRentree(rentree);
-                // niveau.setStatut(Niveau.Statut.PLANIFIE);
+                // Initialiser les champs minimaux du niveau
+                niveau.setNom(nomNiveau);
+                niveau.setType(Niveau.TypeNiveau.RENTREE);
+                niveau.setRentree(rentree);
+                niveau.setStatut(Niveau.Statut.PLANIFIE);
+                niveau.setCapaciteMax(25);
                 niveauRepository.save(niveau);
 
                 log.info("Niveau {} créé pour la rentrée {}", nomNiveau, rentree.getCode());
@@ -84,7 +86,7 @@ public class RentreeServiceImpl implements RentreeService {
     @Transactional
     public RentreeResponse updateRentree(Long id, RentreeRequest request) {
         Rentree rentree = rentreeRepository.findById(id)
-                .orElseThrow(() -> new ResolutionException("Rentrée non trouvée"));
+                .orElseThrow(() -> new IllegalArgumentException("Rentrée non trouvée"));
 
         // Vérifier si le code est modifié et s'il existe déjà
         if (!rentree.getCode().equals(request.getCode()) &&
@@ -117,11 +119,12 @@ public class RentreeServiceImpl implements RentreeService {
     @Transactional
     public void deleteRentree(Long id) {
         Rentree rentree = rentreeRepository.findById(id)
-                .orElseThrow(() -> new ResolutionException("Rentrée non trouvée"));
+                .orElseThrow(() -> new IllegalArgumentException("Rentrée non trouvée"));
 
         // Vérifier si la rentrée a des élèves
         Long nombreEleves = rentreeRepository.countElevesByRentreeId(id);
         if (nombreEleves > 0) {
+            
             throw new IllegalStateException("Impossible de supprimer une rentrée avec des élèves");
         }
 
@@ -164,7 +167,7 @@ public class RentreeServiceImpl implements RentreeService {
     }
 
     private RentreeResponse toResponse(Rentree rentree) {
-        Long nombreNiveaux = niveauRepository.countElevesByNiveauId(rentree.getId());
+        Long nombreNiveaux = niveauRepository.countByRentreeId(rentree.getId());
         Long nombreEleves = rentreeRepository.countElevesByRentreeId(rentree.getId());
 
         return RentreeResponse.fromEntity(rentree, nombreNiveaux, nombreEleves);
@@ -172,13 +175,12 @@ public class RentreeServiceImpl implements RentreeService {
 
     @Override
     public Long countRentrees() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countRentrees'");
+        return rentreeRepository.count();
     }
 
     @Override
     public List<RentreeResponse> getRentreesEnCours() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRentreesEnCours'");
+        List<Rentree> enCours = rentreeRepository.findRentreesEnCours(LocalDate.now());
+        return enCours.stream().map(this::toResponse).collect(Collectors.toList());
     }
 }

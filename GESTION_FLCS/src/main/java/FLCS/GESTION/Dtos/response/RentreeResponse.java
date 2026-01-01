@@ -3,8 +3,8 @@ package FLCS.GESTION.Dtos.response;
 import lombok.Data;
 import java.time.LocalDate;
 
-import FLCS.GESTION.Models.BaseEntity;
-import FLCS.GESTION.Models.Rentree;
+import FLCS.GESTION.Entitees.BaseEntity;
+import FLCS.GESTION.Entitees.Rentree;
 
 public class RentreeResponse {
 

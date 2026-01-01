@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import FLCS.GESTION.Dtos.Request.RentreeRequest;
 import FLCS.GESTION.Dtos.response.RentreeResponse;
-import FLCS.GESTION.Models.Niveau;
-import FLCS.GESTION.Models.Rentree;
+import FLCS.GESTION.Entitees.Niveau;
+import FLCS.GESTION.Entitees.Rentree;
 
 public abstract class RentreeMapper {
 
@@ -49,16 +49,16 @@ public abstract class RentreeMapper {
 
     // Helper methods
     @Named("statutToString")
-    public String statutToString(FLCS.GESTION.Models.Rentree.Statut statut) {
+    public String statutToString(FLCS.GESTION.Entitees.Rentree.Statut statut) {
         return statut != null ? statut.name() : null;
     }
 
     @Named("stringToStatut")
-    public FLCS.GESTION.Models.Rentree.Statut stringToStatut(String statut) {
+    public FLCS.GESTION.Entitees.Rentree.Statut stringToStatut(String statut) {
         if (statut == null)
             return null;
         try {
-            return FLCS.GESTION.Models.Rentree.Statut.valueOf(statut.toUpperCase());
+            return FLCS.GESTION.Entitees.Rentree.Statut.valueOf(statut.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -70,11 +70,11 @@ public abstract class RentreeMapper {
         if (rentree.getDateDebut() != null && rentree.getDateFin() != null) {
             java.time.LocalDate aujourdhui = java.time.LocalDate.now();
             if (aujourdhui.isBefore(rentree.getDateDebut())) {
-                rentree.setStatut(FLCS.GESTION.Models.Rentree.Statut.PLANIFIEE);
+                rentree.setStatut(FLCS.GESTION.Entitees.Rentree.Statut.PLANIFIEE);
             } else if (aujourdhui.isAfter(rentree.getDateFin())) {
-                rentree.setStatut(FLCS.GESTION.Models.Rentree.Statut.TERMINEE);
+                rentree.setStatut(FLCS.GESTION.Entitees.Rentree.Statut.TERMINEE);
             } else {
-                rentree.setStatut(FLCS.GESTION.Models.Rentree.Statut.EN_COURS);
+                rentree.setStatut(FLCS.GESTION.Entitees.Rentree.Statut.EN_COURS);
             }
         }
     }

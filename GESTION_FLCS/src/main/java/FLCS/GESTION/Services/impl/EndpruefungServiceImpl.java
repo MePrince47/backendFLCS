@@ -3,10 +3,10 @@ package FLCS.GESTION.Services.impl;
 
 import FLCS.GESTION.Dtos.Request.EndpruefungRequest;
 import FLCS.GESTION.Dtos.response.EndpruefungResponse;
-import FLCS.GESTION.Models.Endpruefung;
-import FLCS.GESTION.Models.Eleve;
-import FLCS.GESTION.Models.Enseignant;
-import FLCS.GESTION.Models.Niveau;
+import FLCS.GESTION.Entitees.Endpruefung;
+import FLCS.GESTION.Entitees.Eleve;
+import FLCS.GESTION.Entitees.Enseignant;
+import FLCS.GESTION.Entitees.Niveau;
 import FLCS.GESTION.Repository.EleveRepository;
 import FLCS.GESTION.Repository.EndpruefungRepository;
 import FLCS.GESTION.Repository.EnseignantRepository;
@@ -14,17 +14,13 @@ import FLCS.GESTION.Repository.NiveauRepository;
 
 import FLCS.GESTION.Services.EndpruefungService;
 import FLCS.GESTION.Services.EvaluationHebdomadaireService;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.management.relation.RelationNotFoundException;
 
 @Service
 @Slf4j
@@ -50,21 +46,11 @@ public class EndpruefungServiceImpl implements EndpruefungService {
                     "Un examen final existe déjà pour cet élève dans ce niveau");
         }
         // Récupérer les entités
-        Eleve eleve = null;
-        try {
-            eleve = eleveRepository.findById((Long) request.getEleveId())
-                    .orElseThrow(() -> new RelationNotFoundException("Élève non trouvé"));
-        } catch (RelationNotFoundException e) {
+        Eleve eleve = eleveRepository.findById(request.getEleveId())
+                .orElseThrow(() -> new IllegalArgumentException("Élève non trouvé"));
 
-            e.printStackTrace();
-        }
-        Niveau niveau = null;
-        try {
-            niveau = niveauRepository.findById((Long) request.getNiveauId())
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé"));
-        } catch (RelationNotFoundException e) {
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(request.getNiveauId())
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé"));
 
         // Vérifier que l'élève est bien dans ce niveau
         if (!eleve.getNiveau().getId().equals(niveau.getId())) {
@@ -77,26 +63,19 @@ public class EndpruefungServiceImpl implements EndpruefungService {
         endpruefung.setEleve(eleve);
         endpruefung.setNiveau(niveau);
         if (request.getObservateurId() != null) {
-            Enseignant observateur = null;
-            try {
-                observateur = enseignantRepository.findById((Long) request.getObservateurId())
-                        .orElseThrow(() -> new RelationNotFoundException("Observateur non trouvé"));
-            } catch (RelationNotFoundException e) {
-
-                e.printStackTrace();
-            }
+            Enseignant observateur = enseignantRepository.findById(request.getObservateurId())
+                    .orElseThrow(() -> new IllegalArgumentException("Observateur non trouvé"));
             endpruefung.setObservateur(observateur);
         }
+
         endpruefung.setDateExamen(request.getDateExamen());
-        endpruefung.setHeureFin(request.getHeureDebut());
-        endpruefung.setHeureFin(request.getHeureDebut());
-        endpruefung.setDateExamen(request.getDateExamen());
-        endpruefung.setDateExamen(request.getDateExamen());
+        endpruefung.setHeureDebut(request.getHeureDebut());
+        endpruefung.setHeureFin(request.getHeureFin());
         endpruefung.setNoteLesen(request.getNoteLesen());
-        endpruefung.setNoteLesen(request.getNoteLesen());
-        endpruefung.setNoteLesen(request.getNoteLesen());
+        endpruefung.setNoteHoren(request.getNoteHoren());
+        endpruefung.setNoteSchreiben(request.getNoteSchreiben());
         endpruefung.setNoteGrammatik(request.getNoteGrammatik());
-        endpruefung.setNoteLesen(request.getNoteLesen());
+        endpruefung.setNoteSprechen(request.getNoteSprechen());
         // endpruefung.setCommentaire(request.getCommentaire());
 
         // Calculer les moyennes
@@ -117,10 +96,9 @@ public class EndpruefungServiceImpl implements EndpruefungService {
 
     @Override
     @Transactional
-    public EndpruefungResponse mettreAJourEndpruefung(Long id, EndpruefungRequest request)
-            throws RelationNotFoundException {
+    public EndpruefungResponse mettreAJourEndpruefung(Long id, EndpruefungRequest request) {
         Endpruefung endpruefung = endpruefungRepository.findById(id)
-                .orElseThrow(() -> new RelationNotFoundException("Endprüfung non trouvé"));
+                .orElseThrow(() -> new IllegalArgumentException("Endprüfung non trouvé"));
 
         // Vérifier les nouvelles données
         if (!endpruefung.getEleve().getId().equals(request.getEleveId()) ||
@@ -130,28 +108,25 @@ public class EndpruefungServiceImpl implements EndpruefungService {
         // Mettre à jour les données de base
         if (!endpruefung.getEleve().getId().equals(request.getEleveId())) {
             Eleve nouvelEleve = eleveRepository.findById((Long) request.getEleveId())
-                    .orElseThrow(() -> new RelationNotFoundException("Élève non trouvé"));
+                    .orElseThrow(() -> new IllegalArgumentException("Élève non trouvé"));
             endpruefung.setEleve(nouvelEleve);
         }
 
         if (!endpruefung.getNiveau().getId().equals(request.getNiveauId())) {
             Niveau nouveauNiveau = niveauRepository.findById((Long) request.getNiveauId())
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé"));
+                    .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé"));
             endpruefung.setNiveau(nouveauNiveau);
         }
 
         // Mettre à jour les autres champs
         endpruefung.setDateExamen(request.getDateExamen());
-        endpruefung.setHeureFin(request.getHeureDebut());
-        endpruefung.setHeureFin(request.getHeureDebut());
-        endpruefung.setDateExamen(request.getDateExamen());
-        endpruefung.setDateExamen(request.getDateExamen());
+        endpruefung.setHeureDebut(request.getHeureDebut());
+        endpruefung.setHeureFin(request.getHeureFin());
         endpruefung.setNoteLesen(request.getNoteLesen());
-        endpruefung.setNoteLesen(request.getNoteLesen());
-        endpruefung.setNoteLesen(request.getNoteLesen());
+        endpruefung.setNoteHoren(request.getNoteHoren());
+        endpruefung.setNoteSchreiben(request.getNoteSchreiben());
         endpruefung.setNoteGrammatik(request.getNoteGrammatik());
-        endpruefung.setNoteLesen(request.getNoteLesen());
-        // endpruefung.setCommentaire(request.getCommentaire());
+        endpruefung.setNoteSprechen(request.getNoteSprechen());
 
         // Recalculer les moyennes
         endpruefung.calculerMoyenneExamen();
@@ -166,7 +141,39 @@ public class EndpruefungServiceImpl implements EndpruefungService {
     }
 
     private EndpruefungResponse mapToResponse(Endpruefung updatedEndpruefung) {
-        return new EndpruefungResponse();
+        if (updatedEndpruefung == null)
+            return null;
+        EndpruefungResponse r = new EndpruefungResponse();
+        r.setId(updatedEndpruefung.getId());
+        r.setUuid(updatedEndpruefung.getUuid());
+        if (updatedEndpruefung.getEleve() != null) {
+            r.setEleveId(updatedEndpruefung.getEleve().getId());
+            r.setEleveNom(updatedEndpruefung.getEleve().getNom() + " " + updatedEndpruefung.getEleve().getPrenom());
+            r.setEleveMatricule(updatedEndpruefung.getEleve().getMatricule());
+        }
+        if (updatedEndpruefung.getNiveau() != null) {
+            r.setNiveauId(updatedEndpruefung.getNiveau().getId());
+            r.setNiveauNom(updatedEndpruefung.getNiveau().getNom());
+        }
+        if (updatedEndpruefung.getObservateur() != null) {
+            r.setEnseignantId(updatedEndpruefung.getObservateur().getId());
+            r.setEnseignantNom(updatedEndpruefung.getObservateur().getNom());
+        }
+        r.setDateEvaluation(updatedEndpruefung.getDateExamen());
+        r.setNoteLesen(updatedEndpruefung.getNoteLesen());
+        r.setNoteHoren(updatedEndpruefung.getNoteHoren());
+        r.setNoteSchreiben(updatedEndpruefung.getNoteSchreiben());
+        r.setNoteGrammatik(updatedEndpruefung.getNoteGrammatik());
+        r.setNoteSprechen(updatedEndpruefung.getNoteSprechen());
+        
+        // preferer la moyenne finale si disponible, sinon la moyenne de l'examen
+        r.setMoyenne(updatedEndpruefung.getMoyenneFinale() != null ? updatedEndpruefung.getMoyenneFinale()
+                : updatedEndpruefung.getMoyenneExamen());
+        if (updatedEndpruefung.getResultat() != null)
+            r.setStatut(updatedEndpruefung.getResultat().name());
+        r.setDateCreation(updatedEndpruefung.getDateCreation());
+        r.setDateModification(updatedEndpruefung.getDateModification());
+        return r;
     }
 
     @Override
@@ -185,76 +192,112 @@ public class EndpruefungServiceImpl implements EndpruefungService {
 
     @Override
     public EndpruefungResponse validerEndpruefung(Long id) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'validerEndpruefung'");
+        Endpruefung e = endpruefungRepository.findById(id).orElse(null);
+        if (e == null)
+            throw new IllegalArgumentException("Endpruefung non trouvée: " + id);
+        // recalculer les moyennes et déterminer le résultat
+        e.calculateMoyennes();
+        Double moyenneHebdo = evaluationHebdoService.calculerMoyenneHebdoGlobale(e.getEleve().getId(),
+                e.getNiveau().getId());
+        e.calculerMoyenneFinale(moyenneHebdo);
+        if (e.getMoyenneFinale() != null) {
+            e.setResultat(e.getMoyenneFinale() >= 10 ? Endpruefung.Resultat.ADMIS : Endpruefung.Resultat.AJOURNE);
+        }
+        Endpruefung saved = endpruefungRepository.save(e);
+        return mapToResponse(saved);
     }
 
     @Override
     public EndpruefungResponse corrigerEndpruefung(Long id, EndpruefungRequest request) {
+        Endpruefung e = endpruefungRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Endpruefung non trouvée"));
+        // Mettre à jour les notes si fournies
+        if (request.getNoteLesen() != null)
+            e.setNoteLesen(request.getNoteLesen());
+        if (request.getNoteHoren() != null)
+            e.setNoteHoren(request.getNoteHoren());
+        if (request.getNoteSchreiben() != null)
+            e.setNoteSchreiben(request.getNoteSchreiben());
+        if (request.getNoteGrammatik() != null)
+            e.setNoteGrammatik(request.getNoteGrammatik());
+        if (request.getNoteSprechen() != null)
+            e.setNoteSprechen(request.getNoteSprechen());
 
-        throw new UnsupportedOperationException("Unimplemented method 'corrigerEndpruefung'");
+        // Recalculer
+        e.calculerMoyenneExamen();
+        Double moyenneHebdo = evaluationHebdoService.calculerMoyenneHebdoGlobale(e.getEleve().getId(),
+                e.getNiveau().getId());
+        e.calculerMoyenneFinale(moyenneHebdo);
+        Endpruefung saved = endpruefungRepository.save(e);
+        return mapToResponse(saved);
     }
 
     @Override
     public void annulerEndpruefung(Long id) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'annulerEndpruefung'");
+        Endpruefung e = endpruefungRepository.findById(id).orElse(null);
+        if (e == null)
+            return;
+        e.setResultat(Endpruefung.Resultat.ABSENT);
+        endpruefungRepository.save(e);
     }
 
     @Override
     public void supprimerEndpruefung(Long id) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'supprimerEndpruefung'");
+        endpruefungRepository.deleteById(id);
     }
 
     @Override
     public EndpruefungResponse getEndpruefungById(Long id) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungById'");
+        Endpruefung e = endpruefungRepository.findById(id).orElse(null);
+        return mapToResponse(e);
     }
 
     @Override
     public List<EndpruefungResponse> getEndpruefungenByEleve(Long eleveId) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungenByEleve'");
+        return endpruefungRepository.findByEleveId(eleveId).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<EndpruefungResponse> getEndpruefungenByNiveau(Long niveauId) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungenByNiveau'");
+        return endpruefungRepository.findByNiveauId(niveauId).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public EndpruefungResponse getEndpruefungByEleveAndNiveau(Long eleveId, Long niveauId) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungByEleveAndNiveau'");
+        Endpruefung e = endpruefungRepository.findByEleveIdAndNiveauId(eleveId, niveauId).orElse(null);
+        return mapToResponse(e);
     }
-
-  
 
     @Override
     public EndpruefungResponse proclamerResultat(Long id) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'proclamerResultat'");
+        // Proclamer le résultat : même logique que valider
+        return validerEndpruefung(id);
     }
 
     @Override
     public List<EndpruefungResponse> getEndpruefungensManquantes(Long niveauId, Integer semaine, Integer annee) {
-//
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungensManquantes'");
+        // L'entité Endpruefung ne contient pas les informations de semaine/année.
+        // Retourner une liste vide pour l'instant.
+        return List.of();
     }
 
     @Override
     public List<EndpruefungResponse> getEndpruefungenNonRemplies(Long niveauId, Integer semaine, Integer annee) {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getEndpruefungenNonRemplies'");
+        // Idem: pas d'informations disponibles dans l'entité
+        return List.of();
     }
 
     @Override
     public double calculerMoyenneFinale(Long endpruefungId, Long niveauId) {
-        //
-        throw new UnsupportedOperationException("Unimplemented method 'calculerMoyenneFinale'");
+        Endpruefung e = endpruefungRepository.findById(endpruefungId).orElse(null);
+        if (e == null)
+            return 0.0;
+        Double moyenneHebdo = evaluationHebdoService.calculerMoyenneHebdoGlobale(e.getEleve().getId(), niveauId);
+        e.calculerMoyenneFinale(moyenneHebdo);
+        endpruefungRepository.save(e);
+        return e.getMoyenneFinale() != null ? e.getMoyenneFinale() : 0.0;
     }
 
 }

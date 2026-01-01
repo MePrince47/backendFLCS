@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import FLCS.GESTION.Dtos.Request.EvaluationHebdomadaireRequest;
 import FLCS.GESTION.Dtos.response.ApiResponse;
 import FLCS.GESTION.Dtos.response.EvaluationHebdomadaireResponse;
-import FLCS.GESTION.Models.EvaluationHebdomadaire;
+import FLCS.GESTION.Entitees.EvaluationHebdomadaire;
 import FLCS.GESTION.Services.EvaluationHebdomadaireService;
 import FLCS.GESTION.Services.NiveauService;
 import jakarta.validation.Valid;

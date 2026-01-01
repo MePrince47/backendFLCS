@@ -1,6 +1,7 @@
 // entity/BaseEntity.java
 
-package FLCS.GESTION.Models;
+package FLCS.GESTION.Entitees;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,30 +15,34 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Classe de base pour toutes les entités persistées.
+ * Fournit un identifiant auto-généré, un UUID unique, des timestamps de
+ * création
+ * et de modification, ainsi qu'un champ de version pour l'optimistic locking.
+ */
 @MappedSuperclass
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true, nullable = false, updatable = false)
     private String uuid = UUID.randomUUID().toString();
-    
+
     @CreationTimestamp
     @Column(name = "date_creation", updatable = false)
     private LocalDateTime dateCreation;
-    
+
     @UpdateTimestamp
     @Column(name = "date_modification")
     private LocalDateTime dateModification;
-    
+
     @Version
     private Integer version;
 
-    
-    
 }

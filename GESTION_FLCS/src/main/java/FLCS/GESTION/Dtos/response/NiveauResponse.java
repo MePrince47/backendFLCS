@@ -2,7 +2,7 @@ package FLCS.GESTION.Dtos.response;
 
 import java.time.LocalDate;
 
-import FLCS.GESTION.Models.Niveau;
+import FLCS.GESTION.Entitees.Niveau;
 import lombok.Data;
 
 @Data
@@ -29,6 +29,10 @@ public class NiveauResponse {
         response.setNombreNiveaux(nombreNiveaux2);
         response.setNombreEleves(nombreEleves2);
         return response;
+    }
+
+    public String getNom() {
+        return getNom();
     }
 
 }

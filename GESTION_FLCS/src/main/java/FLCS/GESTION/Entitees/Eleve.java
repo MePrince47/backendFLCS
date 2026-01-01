@@ -1,5 +1,4 @@
-// entity/Eleve.java
-package FLCS.GESTION.Models;
+package FLCS.GESTION.Entitees;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +8,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Représente un élève inscrit dans le système.
+ * <p>
+ * Cette entité contient les informations personnelles (nom, prénom, contacts),
+ * les informations de scolarité (niveau, rentrée) et les relations vers
+ * les évaluations, paiements et examens finaux.
+ * </p>
+ */
 @Entity
 @Table(name = "eleves")
-// @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Getter
 @Setter
 @ToString(exclude = { "rentree", "niveau", "partenaire", "evaluations", "endpruefungen", "paiements" })
@@ -32,6 +38,7 @@ public class Eleve extends BaseEntity {
     @Column(length = 20)
     private String telephone;
 
+    /** Téléphone du parent ou tuteur principal. */
     @Column(name = "telephone_parent", length = 20)
     private String telephoneParent;
 
@@ -81,6 +88,7 @@ public class Eleve extends BaseEntity {
     @OneToMany(mappedBy = "eleve", cascade = CascadeType.ALL)
     private List<Paiement> paiements = new ArrayList<>();
 
+    /** Statut du paiement pour un élève. */
     public enum StatutPaiement {
         NON_PAYE, PARTIEL, PAYE
     }
@@ -89,12 +97,18 @@ public class Eleve extends BaseEntity {
         INSCRIT, EN_FORMATION, EN_PROCEDURE, VISA_OBTENU, ABANDON
     }
 
+    /**
+     * Retourne le solde restant dû par l'élève.
+     */
     public Double getSoldeDu() {
         return montantTotalRequis - montantTotalPaye;
     }
 
+    /**
+     * Retourne le pourcentage payé par rapport au montant requis (0-100).
+     */
     public Double getPourcentagePaiement() {
-        if (montantTotalRequis == 0)
+        if (montantTotalRequis == null || montantTotalRequis == 0)
             return 0.0;
         return (montantTotalPaye / montantTotalRequis) * 100;
     }

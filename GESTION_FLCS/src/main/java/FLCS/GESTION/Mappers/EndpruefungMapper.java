@@ -4,16 +4,17 @@ import org.springframework.stereotype.Component;
 // import org.springframework.web.bind.annotation.Mapping;
 
 import FLCS.GESTION.Dtos.Request.EndpruefungRequest;
-import FLCS.GESTION.Models.Eleve;
-import FLCS.GESTION.Models.Endpruefung;
-import FLCS.GESTION.Models.Enseignant;
-import FLCS.GESTION.Models.Niveau;
+import FLCS.GESTION.Entitees.Eleve;
+import FLCS.GESTION.Entitees.Endpruefung;
+import FLCS.GESTION.Entitees.Enseignant;
+import FLCS.GESTION.Entitees.Niveau;
 import java.util.List;
 import org.mapstruct.*;
 import org.mapstruct.Mapping;
 
 @Component
-// @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+// @Mapper(componentModel = "spring", unmappedTargetPolicy =
+// ReportingPolicy.IGNORE)
 public abstract class EndpruefungMapper {
 
     // Request → Entity

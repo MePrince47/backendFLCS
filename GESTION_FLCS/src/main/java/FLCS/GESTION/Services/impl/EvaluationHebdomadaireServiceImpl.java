@@ -3,7 +3,7 @@ package FLCS.GESTION.Services.impl;
 import FLCS.GESTION.Dtos.Request.*;
 import FLCS.GESTION.Dtos.response.*;
 import FLCS.GESTION.Mappers.EvaluationHebdomadaireMapper;
-import FLCS.GESTION.Models.*;
+import FLCS.GESTION.Entitees.*;
 import FLCS.GESTION.Repository.*;
 import FLCS.GESTION.Services.EvaluationHebdomadaireService;
 // import FLCS.GESTION.Exceptions.ResourceNotFoundException;   
@@ -46,33 +46,17 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
         }
 
         // Récupérer les entités
-        try {
-            final Eleve eleve = eleveRepository.findById(request.getEleveId())
-                    .orElseThrow(() -> new RelationNotFoundException("Élève non trouvé"));
-        } catch (RelationNotFoundException e) {
+        Eleve eleve = eleveRepository.findById(request.getEleveId())
+                .orElseThrow(() -> new IllegalArgumentException("Élève non trouvé"));
 
-            e.printStackTrace();
-        }
+        Niveau niveau = niveauRepository.findById(request.getNiveauId())
+                .orElseThrow(() -> new IllegalArgumentException("Niveau non trouvé"));
 
-        try {
-            Niveau niveau = niveauRepository.findById(request.getNiveauId())
-                    .orElseThrow(() -> new RelationNotFoundException("Niveau non trouvé"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
-
-        try {
-            Enseignant enseignant = enseignantRepository.findById(request.getEnseignantId())
-                    .orElseThrow(() -> new RelationNotFoundException("Enseignant non trouvé"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        Enseignant enseignant = enseignantRepository.findById(request.getEnseignantId())
+                .orElseThrow(() -> new IllegalArgumentException("Enseignant non trouvé"));
 
         // Créer l'évaluation
         EvaluationHebdomadaire evaluation = new EvaluationHebdomadaire();
-       
 
         // Si toutes les notes sont remplies, marquer comme SAISI
         if (sontToutesNotesRemplies(evaluation)) {
@@ -96,14 +80,8 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
     @Override
     @Transactional
     public EvaluationHebdomadaireResponse mettreAJourEvaluation(Long id, EvaluationHebdomadaireRequest request) {
-        EvaluationHebdomadaire evaluation = null;
-        try {
-            evaluation = evaluationRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Évaluation non trouvée"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        EvaluationHebdomadaire evaluation = evaluationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Évaluation non trouvée"));
 
         // Vérifier que l'évaluation peut être modifiée
         if (!evaluation.getStatut().equals(EvaluationHebdomadaire.Statut.BROUILLON) &&
@@ -117,7 +95,6 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
         evaluation.setNoteSchreiben(request.getNoteSchreiben());
         evaluation.setNoteGrammatik(request.getNoteGrammatik());
         evaluation.setNoteSprechen(request.getNoteSprechen());
-     
 
         // Si toutes les notes sont maintenant remplies, passer en SAISI
         if (sontToutesNotesRemplies(evaluation) &&
@@ -134,14 +111,8 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
     @Override
     @Transactional
     public EvaluationHebdomadaireResponse validerEvaluation(Long id) {
-        EvaluationHebdomadaire evaluation = null;
-        try {
-            evaluation = evaluationRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Évaluation non trouvée"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        EvaluationHebdomadaire evaluation = evaluationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Évaluation non trouvée"));
 
         // Vérifier que l'évaluation peut être validée
         if (!evaluation.getStatut().equals(EvaluationHebdomadaire.Statut.SAISI)) {
@@ -160,14 +131,8 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
     @Override
     @Transactional
     public void annulerEvaluation(Long id) {
-        EvaluationHebdomadaire evaluation = null;
-        try {
-            evaluation = evaluationRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Évaluation non trouvée"));
-        } catch (RelationNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        EvaluationHebdomadaire evaluation = evaluationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Évaluation non trouvée"));
 
         evaluation.setStatut(EvaluationHebdomadaire.Statut.ANNULE);
 
@@ -178,13 +143,8 @@ public class EvaluationHebdomadaireServiceImpl implements EvaluationHebdomadaire
     @Override
     @Transactional
     public void supprimerEvaluation(Long id) {
-        EvaluationHebdomadaire evaluation = null;
-        try {
-            evaluation = evaluationRepository.findById(id)
-                    .orElseThrow(() -> new RelationNotFoundException("Évaluation non trouvée"));
-        } catch (RelationNotFoundException e) {
-            e.printStackTrace();
-        }
+        EvaluationHebdomadaire evaluation = evaluationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Évaluation non trouvée"));
 
         // Vérifier que l'évaluation peut être supprimée
         if (evaluation.getStatut().equals(EvaluationHebdomadaire.Statut.VALIDE)) {

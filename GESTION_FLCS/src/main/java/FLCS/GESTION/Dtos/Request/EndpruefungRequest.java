@@ -1,8 +1,18 @@
 package FLCS.GESTION.Dtos.Request;
 
+import lombok.Data;
 import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
+/**
+ * Requête pour créer/mettre à jour une Endpruefung (examen final).
+ *
+ * Contient les identifiants, les notes et les métadonnées de l'évaluation.
+ */
+@Data
 public class EndpruefungRequest {
+
     @NotNull(message = "L'élève est obligatoire")
     private Long eleveId;
 
@@ -19,6 +29,16 @@ public class EndpruefungRequest {
     @Min(value = 2020, message = "L'année doit être 2020 ou ultérieure")
     @Max(value = 2100, message = "L'année ne peut dépasser 2100")
     private Integer annee;
+
+    private Long observateurId;
+
+    private LocalDate dateExamen;
+
+    private LocalTime heureDebut;
+
+    private LocalTime heureFin;
+
+    private String commentaire;
 
     @DecimalMin(value = "0.0", message = "La note Lesen doit être entre 0 et 20")
     @DecimalMax(value = "20.0", message = "La note Lesen doit être entre 0 et 20")
@@ -39,39 +59,5 @@ public class EndpruefungRequest {
     @DecimalMin(value = "0.0", message = "La note Sprechen doit être entre 0 et 20")
     @DecimalMax(value = "20.0", message = "La note Sprechen doit être entre 0 et 20")
     private Double noteSprechen;
-
-    public Object getEleveId() {
-       return getEleveId();
-    }
-
-    public Object getNiveauId() {
-        return getNiveauId();
-       
-    }
-
-    public Object getDateExamen() {
-        return getDateExamen();
-    }
-
-    public Object getHeureDebut() {
-       return getHeureDebut();
-    }
-
-    public Object getNoteLesen() {
-       return getNoteLesen();
-    }
-
-    public Object getNoteGrammatik() {
-        return getNoteGrammatik();
-       
-    }
-
-    public Object getCommentaire() {
-      return getCommentaire();
-    }
-
-    public Object getObservateurId() {
-     return getObservateurId();
-    }
 
 }

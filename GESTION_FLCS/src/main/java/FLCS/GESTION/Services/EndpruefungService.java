@@ -7,38 +7,35 @@ import FLCS.GESTION.Dtos.response.EvaluationHebdomadaireResponse;
 
 import java.util.List;
 
-import javax.management.relation.RelationNotFoundException;
-
 public interface EndpruefungService {
-    
+
     EndpruefungResponse creerEndpruefung(EndpruefungRequest request);
-    
-    EndpruefungResponse mettreAJourEndpruefung(Long id, EndpruefungRequest request) throws RelationNotFoundException;
-    
+
+    EndpruefungResponse mettreAJourEndpruefung(Long id, EndpruefungRequest request);
+
     EndpruefungResponse validerEndpruefung(Long id);
-    
+
     EndpruefungResponse corrigerEndpruefung(Long id, EndpruefungRequest request);
-    
+
     void annulerEndpruefung(Long id);
-    
+
     void supprimerEndpruefung(Long id);
-    
+
     EndpruefungResponse getEndpruefungById(Long id);
-    
+
     List<EndpruefungResponse> getEndpruefungenByEleve(Long eleveId);
-    
+
     List<EndpruefungResponse> getEndpruefungenByNiveau(Long niveauId);
-    
+
     EndpruefungResponse getEndpruefungByEleveAndNiveau(Long eleveId, Long niveauId);
-    
+
     List<EndpruefungResponse> getEndpruefungenByResultat(String resultat);
-       
+
     List<EndpruefungResponse> getEndpruefungensManquantes(Long niveauId, Integer semaine, Integer annee);
 
     List<EndpruefungResponse> getEndpruefungenNonRemplies(Long niveauId, Integer semaine, Integer annee);
 
-    
     double calculerMoyenneFinale(Long endpruefungId, Long niveauId);
-    
+
     EndpruefungResponse proclamerResultat(Long id);
 }

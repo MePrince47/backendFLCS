@@ -1,7 +1,7 @@
 package FLCS.GESTION.Controllers;
 
-import FLCS.GESTION.Models.Eleve;
-import FLCS.GESTION.Models.Niveau;
+import FLCS.GESTION.Entitees.Eleve;
+import FLCS.GESTION.Entitees.Niveau;
 import FLCS.GESTION.Dtos.response.EvaluationHebdomadaireResponse;
 import FLCS.GESTION.Dtos.response.EndpruefungResponse;
 import FLCS.GESTION.Repository.EleveRepository;
