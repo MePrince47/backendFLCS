@@ -30,7 +30,6 @@ public class EleveController {
     @PostMapping
     public ResponseEntity<EleveResponse> create(
             @Valid @RequestBody EleveRequest request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eleveService.create(request));
     }

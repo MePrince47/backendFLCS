@@ -39,22 +39,21 @@ public class EleveService {
 
     //AFFICHAGE D'UN ELEVE
     private EleveResponse mapToResponse(Eleve e) {
-    return new EleveResponse(
-        e.getId(),
-        e.getNom(),
-        e.getPrenom(),
-        e.getDateNaiss(),
-        e.getNiveauScolaire(),
-        e.getStatut(),
-        e.getTypeProcedure(),
-        e.getTelCandidat(),
-        e.getTelParent(),
-        e.getPartenaire() != null ? e.getPartenaire().getNomPartenaire() : null,
-        e.getNiveauLangue() != null ? e.getNiveauLangue().getCode() : null,
-        e.getRentree() != null ? e.getRentree().getNomRentree() : null
-      );
-
-
+        return new EleveResponse(
+            e.getId(),
+            e.getNom(),
+            e.getPrenom(),
+            e.getDateNaiss(),
+            e.getNiveauScolaire(),
+            e.getTypeProcedure(),    
+            e.getMontantTotal(),      
+            e.getTelCandidat(),
+            e.getTelParent(),
+            e.getStatut(),            
+            e.getPartenaire() != null ? e.getPartenaire().getNomPartenaire() : null,
+            e.getNiveauLangue() != null ? e.getNiveauLangue().getCode() : null,
+            e.getRentree() != null ? e.getRentree().getNomRentree() : null
+        );
     }
 
     // CREATE
@@ -83,6 +82,7 @@ public class EleveService {
             .dateNaiss(request.dateNaiss())
             .niveauScolaire(request.niveauScolaire())
             .typeProcedure(request.typeProcedure())
+            .montantTotal(request.montantTotal()) 
             .telCandidat(request.telCandidat())
             .telParent(request.telParent())
             .statut(request.statut())

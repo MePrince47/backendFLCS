@@ -13,6 +13,7 @@ public record EleveRequest(
 
     @NotBlank String niveauScolaire,
     @NotBlank String typeProcedure,
+    @NotNull Double montantTotal,
     @NotBlank String telCandidat,
     @NotBlank String telParent,
     @NotBlank String statut,

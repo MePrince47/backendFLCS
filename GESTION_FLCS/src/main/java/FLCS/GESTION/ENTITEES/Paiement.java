@@ -17,10 +17,16 @@ public class Paiement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double montant;
+
+    @Column(nullable = false)
     private LocalDate datePaiement;
 
-    @ManyToOne
+    @Column(nullable = false, unique = true)
+    private String referenceVirement;
+
+    @ManyToOne(optional = false)
     private Eleve eleve;
 }
 

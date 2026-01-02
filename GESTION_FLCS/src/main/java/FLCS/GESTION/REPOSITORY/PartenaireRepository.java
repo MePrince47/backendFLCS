@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PartenaireRepository extends JpaRepository<Partenaire, Long> {
     Optional<Partenaire> findByNomPartenaire(String nomPartenaire);
+
+    boolean existsByNomPartenaire(String nomPartenaire);
 }
 

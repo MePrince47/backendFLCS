@@ -34,6 +34,13 @@ public class Eleve {
 
     @NotBlank
     private String typeProcedure;
+
+    @Column(nullable = false)
+    @NotNull(message = "Le montant total est obligatoire")
+    @Positive(message = "Le montant total doit être supérieur à 0")
+    private Double montantTotal;
+
+    
     @NotBlank
     private String telCandidat;
     @NotBlank

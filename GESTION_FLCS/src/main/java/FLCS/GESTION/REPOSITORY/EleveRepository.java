@@ -35,5 +35,6 @@ public interface EleveRepository extends JpaRepository<Eleve, Long> {
     List<Eleve> findByNiveauLangue_Code(String code);
 
 
+
 }
 

@@ -1,9 +1,14 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.Partenaire;
-import FLCS.GESTION.REPOSITORY.PartenaireRepository;
-import FLCS.GESTION.REPOSITORY.UtilisateurRepository;
+import FLCS.GESTION.SERVICE.PartenaireService;
+import FLCS.GESTION.DTO.PartenaireRequest;
+import FLCS.GESTION.DTO.PartenaireResponse;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -11,21 +16,30 @@ import java.util.List;
 @RequestMapping("/api/partenaires")
 public class PartenaireController {
 
-    private final PartenaireRepository repo;
+    private final PartenaireService partenaireService;
 
-    // CONSTRUCTEUR 
-    public PartenaireController(PartenaireRepository repo) {
-        this.repo = repo;
+    public PartenaireController(PartenaireService partenaireService) {
+        this.partenaireService = partenaireService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Partenaire create(@RequestBody Partenaire p) {
-        return repo.save(p);
+    public ResponseEntity<PartenaireResponse> create(
+            @RequestBody PartenaireRequest request) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(partenaireService.create(request));
     }
 
     @GetMapping
-    public List<Partenaire> list() {
-        return repo.findAll();
+    public List<PartenaireResponse> getAll() {
+        return partenaireService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public PartenaireResponse getById(@PathVariable Long id) {
+        return partenaireService.getById(id);
     }
 }
+
 
