@@ -97,7 +97,7 @@ src/main/java/FLCS/GESTION
 - montant total
 
   #### Exemple JSON – Création élève
-  ```json
+```json
 {
   "nom": "MIKAM",
   "prenom": "Borel",
