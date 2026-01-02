@@ -9,15 +9,17 @@
 
 ## 📌 Description
 
-**GESTION_FLCS** est une **API REST sécurisée** développée avec **Spring Boot**, destinée à la gestion administrative et pédagogique des élèves d’un centre de formation linguistique.
+**GESTION_FLCS** est une application backend développée avec **Spring Boot**, destinée à la gestion administrative et pédagogique des élèves d’un centre de formation linguistique.
 
 L’application permet :
 - la gestion des **élèves**
-- la gestion des **rentrées**
+- la gestion des **rentrées scolaires**
 - la gestion des **niveaux linguistiques**
 - la gestion des **partenaires**
+- la gestion des **paiements par virement bancaire**
 - la gestion des **utilisateurs** avec rôles
 - une **recherche avancée multi-critères**
+- l’**export PDF des paiements**
 - une **sécurité basée sur JWT**
 
 Ce projet a été conçu avec des **bonnes pratiques professionnelles backend** (DTO, sécurité, séparation des couches, pagination, etc.).
@@ -34,6 +36,7 @@ Ce projet a été conçu avec des **bonnes pratiques professionnelles backend** 
 - **Hibernate**
 - **Lombok**
 - **Maven**
+- **PDF (ReportLab / iText selon config)**
 - **Swagger (OpenAPI)** *(optionnel si activé)*
 
 ---
@@ -48,6 +51,7 @@ src/main/java/FLCS/GESTION
 ├── DTO             # Objets de transfert (Request / Response)
 ├── ENTITEES        # Entités JPA
 ├── EXCEPTION       # Gestion centralisée des erreurs
+├── EXPORT          # Génération PDF
 ├── REPOSITORY      # Accès base de données
 ├── SECURITY        # JWT, UserDetails, filtres
 ├── SERVICE         # Logique métier
@@ -69,6 +73,7 @@ src/main/java/FLCS/GESTION
 - **SECRETAIRE**  
 - **ENSEIGNANT**
 
+# 👨‍🎓 Gestion des élèves
 ## 🔒 Accès aux fonctionnalités
 
 | Fonctionnalité       | ADMIN | SECRETAIRE | ENSEIGNANT |
@@ -87,19 +92,28 @@ src/main/java/FLCS/GESTION
 - statut  
 - partenaire  
 - rentree  
-- niveau linguistique  
+- niveau linguistique
+- type de procedure
+- montant total
 
-### Rentree
-- nom (ex: `SEPTEMBRE_2024`)  
-- création automatique de niveaux  
+  #### Exemple JSON – Création élève
+  ```json
+{
+  "nom": "MIKAM",
+  "prenom": "Borel",
+  "dateNaiss": "2012-05-14",
+  "niveauScolaire": "LICENCE",
+  "typeProcedure": "FORMATION",
+  "montantTotal": 900000,
+  "telCandidat": "690000000",
+  "telParent": "677000000",
+  "statut": "ACTIF",
 
-### Niveau
-- code (A1, A2, B1, B2…)  
-- lié à une rentrée  
-
-### Partenaire
-- nom unique  
-
+  "nomPartenaire": "FLCS",
+  "codeNiveau": "B2",
+  "nomRentree": "SEPTEMBRE_2024"
+}
+```
 ## 🔍 Recherche avancée
 
 La recherche avancée permet de filtrer les élèves sans obligation de fournir tous les paramètres.
@@ -137,6 +151,74 @@ GET /api/eleves/search?niveauLangue=B1&partenaire=FLCS
 
 ---
 
+# 🤝 Gestion des partenaires
+
+### ✔ Fonctionnalités
+
+- Création
+- Liste
+- Association aux élèves
+- Un partenaire est identifié par un nom unique
+
+  ---
+
+  # 💳 Gestion des paiements (Virement bancaire)
+
+  ### ✔ Règles métier implémentées
+
+- Paiement uniquement par virement
+-Référence de virement unique
+- Impossible de payer :
+   - plus que le reste à payer
+   - si le solde est déjà réglé
+
+### ✔ Fonctionnalités
+
+- Enregistrement des paiements
+- Historique par élève
+- Calcul automatique :
+- Total payé
+- Reste à payer
+- Résumé financier
+- Export PDF
+
+#### 📥 Exemple JSON – Paiement
+
+```json
+{
+  "montant": 200000,
+  "datePaiement": "2026-01-02",
+  "referenceVirement": "VIR-2026-001",
+  "eleveId": 1
+}
+```
+### 📊 Résumé financier élève
+
+Retourne :
+- Montant total
+- Total payé
+- Reste à payer
+
+### 📄 Export PDF des paiements
+
+Génération d’un PDF récapitulatif
+
+Contenu :
+- Élève
+- Montant total
+- Total payé
+- Reste à payer
+- Historique des paiements
+---
+  
+### Rentree
+- nom (ex: `SEPTEMBRE_2024`)
+- création automatique de niveaux  
+
+### Niveau
+- code (A1, A2, B1, B2…)  
+- lié à une rentrée  
+
 ## 🧪 Exemples de requêtes JSON
 
 ### ➕ Créer un partenaire
@@ -149,21 +231,6 @@ GET /api/eleves/search?niveauLangue=B1&partenaire=FLCS
 ```json
 {
   "nomRentree": "SEPTEMBRE_2024"
-}
-```
-### ➕ Créer un élève
-```json
-{
-  "nom": "MIKAM FOKOUA",
-  "prenom": "Borel",
-  "dateNaiss": "2012-05-14",
-  "niveauScolaire": "BAC",
-  "typeProcedure": "AUSBILDUNG",
-  "telCandidat": "690112233",
-  "telParent": "677889900",
-  "statut": "ACTIF",
-  "nomPartenaire": "FLCS",
-  "codeNiveau": "B1"
 }
 ```
 ## ⚙️ Installation & lancement
