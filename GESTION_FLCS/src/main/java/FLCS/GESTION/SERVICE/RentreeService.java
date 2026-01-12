@@ -24,8 +24,8 @@ public class RentreeService {
 
         for (String code : codes) {
             Niveau niveau = Niveau.builder()
-                   .code(code)
-                   .build();
+                    .code(code)
+                    .build();
 
             saved.addNiveau(niveau);
         }
@@ -33,5 +33,10 @@ public class RentreeService {
         return rentreeRepo.save(saved);
     }
 
+    // 🔴 CETTE MÉTHODE MANQUAIT
+    public List<Rentree> getAllRentrees() {
+        return rentreeRepo.findAll();
+    }
 }
+
 

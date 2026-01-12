@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/eleves")
+@CrossOrigin(origins = "http://localhost:4200")
 public class EleveController {
 
     private final EleveService eleveService;

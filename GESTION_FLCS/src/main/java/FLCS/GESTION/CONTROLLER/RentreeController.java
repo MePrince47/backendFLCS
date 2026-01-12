@@ -21,4 +21,8 @@ public class RentreeController {
         return service.createRentree(rentree);
     }
 
+    @GetMapping
+    public List<Rentree> findAll() {
+        return service.getAllRentrees();
+    }
 }
