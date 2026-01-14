@@ -14,10 +14,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity
-@Data              // Génère getters, setters, toString, equals, hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Builder           // Permet le pattern Builder pour créer des objets facilement
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Rentree {
 
     @Id
@@ -36,13 +37,9 @@ public class Rentree {
     private List<Niveau> niveaux = new ArrayList<>();
 
     public void addNiveau(Niveau niveau) {
-    if(this.niveaux == null){
-        this.niveaux = new ArrayList<>();
+        niveaux.add(niveau);
+        niveau.setRentree(this);
     }
-    this.niveaux.add(niveau);
-    niveau.setRentree(this);
-}
-
 }
 
 

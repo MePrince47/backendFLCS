@@ -1,20 +1,19 @@
 package FLCS.GESTION.ENTITEES;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
-@Data              // Génère getters, setters, toString, equals, hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Builder           // Permet le pattern Builder pour créer des objets facilement
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(
-  uniqueConstraints = @UniqueConstraint(
-    columnNames = {"evaluation_hebdo_id", "eleve_id"}
-  )
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"evaluation_hebdo_id", "eleve_id"}
+    )
 )
 public class NoteHebdo {
 
@@ -22,16 +21,31 @@ public class NoteHebdo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "evaluation_hebdo_id", nullable = false)
+    @NotNull
     private EvaluationHebdo evaluationHebdo;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "eleve_id", nullable = false)
+    @NotNull
     private Eleve eleve;
 
+    @NotNull 
     private Double les;
+
+    @NotNull 
     private Double hor;
+
+    @NotNull  
     private Double schreib;
+
+    @NotNull 
     private Double gramm;
+
+    @NotNull 
     private Double spre;
+
 }
+
 

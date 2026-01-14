@@ -21,5 +21,5 @@ public record EleveRequest(
     // références simples
     @NotBlank String codeNiveau,
     @NotBlank String nomPartenaire,
-    @NotBlank String nomRentree
+    String nomRentree  // peut etre null
 ) {}
