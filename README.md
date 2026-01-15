@@ -1,6 +1,6 @@
 # backendFLCS
 
-# 🎓 GESTION_FLCS – API de gestion des élèves
+# 🎓 GESTION_FLCS 
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
@@ -9,17 +9,19 @@
 
 ## 📌 Description
 
-**GESTION_FLCS** est une application backend développée avec **Spring Boot**, destinée à la gestion administrative et pédagogique des élèves d’un centre de formation linguistique.
+**GESTION_FLCS** est une application backend développée avec **Spring Boot**, destinée à un centre de formation linguistique et d’accompagnement administratif pour des candidats souhaitant étudier, se former ou travailler en Allemagne.
 
 L’application permet :
 - la gestion des **élèves**
 - la gestion des **rentrées scolaires**
 - la gestion des **niveaux linguistiques**
+- la gestion des **evaluationset des resultats**
 - la gestion des **partenaires**
 - la gestion des **paiements par virement bancaire**
 - la gestion des **utilisateurs** avec rôles
 - une **recherche avancée multi-critères**
 - l’**export PDF des paiements**
+- l’**export PDF des resultats d'un niveau**
 - une **sécurité basée sur JWT**
 
 Ce projet a été conçu avec des **bonnes pratiques professionnelles backend** (DTO, sécurité, séparation des couches, pagination, etc.).
