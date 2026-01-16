@@ -39,7 +39,7 @@ Ce projet a été conçu avec des **bonnes pratiques professionnelles backend** 
 - **Lombok**
 - **Maven**
 - **PDF (ReportLab / iText selon config)**
-- **Swagger (OpenAPI)** *(optionnel si activé)*
+- **Swagger (OpenAPI)**
 
 ---
 
@@ -374,11 +374,15 @@ mvn clean spring-boot:run
 
 ---
 
+### Documentation
+
+- Swagger / OpenAPI :http://localhost:8080/swagger-ui.html
+
+
 ## 🚀 Évolutions possibles
 
 - Pagination & tri avancés
 - Finalisation de la sécurité JWT( pour l'instant Basic Auth) 
-- Swagger / OpenAPI  
 - Tests d’intégration  
 - Statistiques et tableaux de bord  
 - Déploiement Docker
