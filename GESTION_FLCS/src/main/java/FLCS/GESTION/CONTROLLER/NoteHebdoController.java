@@ -12,10 +12,16 @@ import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.util.List;
 
+@Tag(
+    name = "Notes – Évaluations hebdomadaires",
+    description = "Saisie et consultation des notes hebdomadaires"
+)
 @RestController
 @RequestMapping("/api/notes-hebdo")
 public class NoteHebdoController {
@@ -27,6 +33,11 @@ public class NoteHebdoController {
     }
 
     // Saisir
+    @Operation(
+        summary = "Saisir une note hebdomadaire",
+        description = "Permet de saisir la note d’un élève pour une semaine donnée"
+    )
+    @ApiResponse(responseCode = "200", description = "Note enregistrée")
     @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
@@ -36,6 +47,11 @@ public class NoteHebdoController {
     }
 
     // Modifier
+    @Operation(
+        summary = "Modifier une note hebdomadaire",
+        description = "Permet de modifier une note hebdomadaire existante"
+    )
+    @ApiResponse(responseCode = "200", description = "Note modifiée")
     @PreAuthorize("hasRole('ENSEIGNANT')")
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteResponse> modifier(
@@ -46,7 +62,12 @@ public class NoteHebdoController {
     }
 
     // Toutes les notes d’un niveau
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE', 'ADMIN')")
+    @Operation(
+        summary = "Notes hebdomadaires d’un niveau",
+        description = "Retourne toutes les notes hebdomadaires d’un niveau"
+    )
+    @ApiResponse(responseCode = "200", description = "Liste des notes")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @GetMapping("/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParNiveau(
             @PathVariable Long niveauId
@@ -55,7 +76,12 @@ public class NoteHebdoController {
     }
 
     // Notes d’un niveau pour une semaine
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE', 'ADMIN')")
+    @Operation(
+        summary = "Notes hebdomadaires par semaine",
+        description = "Retourne les notes d’un niveau pour une semaine précise"
+    )
+    @ApiResponse(responseCode = "200", description = "Notes de la semaine")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @GetMapping("/niveau/{niveauId}/semaine/{semaine}")
     public ResponseEntity<List<NoteResponse>> lireParNiveauEtSemaine(
             @PathVariable Long niveauId,
@@ -67,7 +93,12 @@ public class NoteHebdoController {
     }
 
     // Notes d’un élève pour un niveau
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE', 'ADMIN')")
+    @Operation(
+        summary = "Notes d’un élève",
+        description = "Retourne toutes les notes hebdomadaires d’un élève pour un niveau"
+    )
+    @ApiResponse(responseCode = "200", description = "Notes de l’élève")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @GetMapping("/eleve/{eleveId}/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParEleveEtNiveau(
             @PathVariable Long eleveId,

@@ -15,9 +15,17 @@ import org.springframework.http.MediaType;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 import java.util.List;
 
 
+@Tag(
+    name = "Paiements",
+    description = "Gestion des paiements, situations financières et export PDF"
+)
 @RestController
 @RequestMapping("/api/paiements")
 public class PaiementController {
@@ -33,6 +41,11 @@ public class PaiementController {
         this.paiementPdfGenerator = paiementPdfGenerator;
     }
 
+    @Operation(
+        summary = "Enregistrer un paiement",
+        description = "Permet d’enregistrer un paiement pour un élève"
+    )
+    @ApiResponse(responseCode = "201", description = "Paiement enregistré avec succès")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<PaiementResponse> create(
@@ -42,12 +55,23 @@ public class PaiementController {
                 .body(paiementService.create(request));
     }
 
+    @Operation(
+        summary = "Liste des paiements d’un élève",
+        description = "Retourne tous les paiements effectués par un élève"
+    )
+    @ApiResponse(responseCode = "200", description = "Liste des paiements")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleve/{eleveId}")
     public List<PaiementResponse> getByEleve(@PathVariable Long eleveId) {
         return paiementService.getByEleve(eleveId);
     }
 
     // GET_INFOS SUR LES PAIEMENTS D'UN ELEVE
+    @Operation(
+        summary = "Résumé des paiements",
+        description = "Retourne la situation financière globale d’un élève (payé, restant, statut)"
+    )
+    @ApiResponse(responseCode = "200", description = "Résumé financier")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleves/{id}/resume")
     public PaiementResumeResponse resumePaiement(@PathVariable Long id) {
@@ -55,15 +79,28 @@ public class PaiementController {
     }
 
     // GET HISTORIQUE DE PAIEMENTS D'UN ELEVE
-    @GetMapping("/eleves/{id}/paiements")
+    @Operation(
+        summary = "Historique des paiements",
+        description = "Retourne l’historique détaillé des paiements d’un élève"
+    )
+    @ApiResponse(responseCode = "200", description = "Historique des paiements")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    @GetMapping("/eleves/{id}/paiements")
     public List<PaiementHistoriqueResponse> historique(@PathVariable Long id) {
         return paiementService.historique(id);
     }
 
     // EXPORT PDF
-    @GetMapping("/paiements/export/pdf/{eleveId}")
+    @Operation(
+        summary = "Exporter les paiements en PDF",
+        description = "Génère un document PDF officiel des paiements d’un élève"
+    )
+    @ApiResponse(responseCode = "200", description = "PDF généré")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    @GetMapping(
+        value = "/paiements/export/pdf/{eleveId}",
+        produces = MediaType.APPLICATION_PDF_VALUE
+    )
     public ResponseEntity<byte[]> exportPdf(@PathVariable Long eleveId) {
 
         PaiementExport dto = paiementService.exportPaiements(eleveId);
