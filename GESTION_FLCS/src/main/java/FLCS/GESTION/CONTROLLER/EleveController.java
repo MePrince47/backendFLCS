@@ -31,7 +31,6 @@ public class EleveController {
     @PostMapping
     public ResponseEntity<EleveResponse> create(
             @Valid @RequestBody EleveRequest request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eleveService.create(request));
     }
@@ -79,5 +78,19 @@ public class EleveController {
                 )
         );
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
+    @GetMapping("/niveau/{niveauId}")
+    public List<EleveResponse> getByNiveau(@PathVariable Long niveauId) {
+        return eleveService.getByNiveau(niveauId);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
+    @GetMapping("/rentree/{rentreeId}")
+    public List<EleveResponse> getByRentree(@PathVariable Long rentreeId) {
+        return eleveService.getByRentree(rentreeId);
+    }
+
+
 
 }

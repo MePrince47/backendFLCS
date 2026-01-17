@@ -13,6 +13,7 @@ public record EleveRequest(
 
     @NotBlank String niveauScolaire,
     @NotBlank String typeProcedure,
+    @NotNull Double montantTotal,
     @NotBlank String telCandidat,
     @NotBlank String telParent,
     @NotBlank String statut,
@@ -20,5 +21,5 @@ public record EleveRequest(
     // références simples
     @NotBlank String codeNiveau,
     @NotBlank String nomPartenaire,
-    @NotBlank String nomRentree
+    String nomRentree  // peut etre null
 ) {}

@@ -9,6 +9,7 @@ public record EleveResponse(
     LocalDate dateNaiss,
     String niveauScolaire,
     String typeProcedure,
+    Double montantTotal,
     String telCandidat,
     String telParent,
     String statut,

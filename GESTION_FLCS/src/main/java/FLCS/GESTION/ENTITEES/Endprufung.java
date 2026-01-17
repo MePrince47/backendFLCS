@@ -3,23 +3,37 @@ package FLCS.GESTION.ENTITEES;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Data              // Génère getters, setters, toString, equals, hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Builder           // Permet le pattern Builder pour créer des objets facilement
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"niveau_id"}
+    )
+)
 public class Endprufung {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "La date de l'examen est obligatoire")
     private LocalDate dateExam;
 
-    @OneToOne
+    @OneToOne(optional = false)
+    @JoinColumn(name = "niveau_id", nullable = false)
+    @NotNull
     private Niveau niveau;
+
+    //  AJOUT
+    @OneToMany(mappedBy = "endprufung", cascade = CascadeType.ALL)
+    private List<NoteEndprufung> notes;
 }
+
 

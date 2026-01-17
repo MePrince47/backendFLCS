@@ -39,22 +39,21 @@ public class EleveService {
 
     //AFFICHAGE D'UN ELEVE
     private EleveResponse mapToResponse(Eleve e) {
-    return new EleveResponse(
-        e.getId(),
-        e.getNom(),
-        e.getPrenom(),
-        e.getDateNaiss(),
-        e.getNiveauScolaire(),
-        e.getStatut(),
-        e.getTypeProcedure(),
-        e.getTelCandidat(),
-        e.getTelParent(),
-        e.getPartenaire() != null ? e.getPartenaire().getNomPartenaire() : null,
-        e.getNiveauLangue() != null ? e.getNiveauLangue().getCode() : null,
-        e.getRentree() != null ? e.getRentree().getNomRentree() : null
-      );
-
-
+        return new EleveResponse(
+            e.getId(),
+            e.getNom(),
+            e.getPrenom(),
+            e.getDateNaiss(),
+            e.getNiveauScolaire(),
+            e.getTypeProcedure(),    
+            e.getMontantTotal(),      
+            e.getTelCandidat(),
+            e.getTelParent(),
+            e.getStatut(),            
+            e.getPartenaire() != null ? e.getPartenaire().getNomPartenaire() : null,
+            e.getNiveauLangue() != null ? e.getNiveauLangue().getCode() : null,
+            e.getRentree() != null ? e.getRentree().getNomRentree() : null
+        );
     }
 
     // CREATE
@@ -65,17 +64,30 @@ public class EleveService {
             .findByNomPartenaire(request.nomPartenaire())
             .orElseThrow(() -> new IllegalArgumentException("Partenaire introuvable"));
 
-        Niveau niveau = niveauRepository
-            .findByCodeAndRentree_NomRentree(
-                request.codeNiveau(),
-                request.nomRentree()
-            )
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Niveau " + request.codeNiveau() +
-                    " introuvable pour la rentrée " + request.nomRentree()
+        Niveau niveau;
+
+        if (request.nomRentree() == null) {
+            // niveau indépendant
+            niveau = niveauRepository
+                .findByCodeAndRentreeIsNull(request.codeNiveau())
+                .orElseThrow(() ->
+                    new IllegalArgumentException(
+                        "Niveau indépendant " + request.codeNiveau() + " introuvable"
+                    )
+                );
+        } else {
+            niveau = niveauRepository
+                .findByCodeAndRentree_NomRentree(
+                    request.codeNiveau(),
+                    request.nomRentree()
                 )
-            );
+                .orElseThrow(() ->
+                    new IllegalArgumentException(
+                        "Niveau " + request.codeNiveau() +
+                        " introuvable pour la rentrée " + request.nomRentree()
+                    )
+                );
+        }
 
         Eleve eleve = Eleve.builder()
             .nom(request.nom())
@@ -83,12 +95,13 @@ public class EleveService {
             .dateNaiss(request.dateNaiss())
             .niveauScolaire(request.niveauScolaire())
             .typeProcedure(request.typeProcedure())
+            .montantTotal(request.montantTotal()) 
             .telCandidat(request.telCandidat())
             .telParent(request.telParent())
             .statut(request.statut())
             .partenaire(partenaire)
             .niveauLangue(niveau)
-            .rentree(niveau.getRentree()) 
+            .rentree(niveau.getRentree()) // peut être null
             .build();
 
         Eleve saved = eleveRepository.save(eleve);
@@ -209,6 +222,25 @@ public class EleveService {
             resultats
         );
     }
+
+    // LISTE DES ELEVES D'UN NIVEAU
+    @Transactional(readOnly = true)
+    public List<EleveResponse> getByNiveau(Long niveauId) {
+        return eleveRepository.findByNiveauLangue_Id(niveauId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    // LISTE DES ELEVES D'UNE RENTREE
+    @Transactional(readOnly = true)
+    public List<EleveResponse> getByRentree(Long rentreeId) {
+        return eleveRepository.findByNiveauLangue_Rentree_Id(rentreeId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     
     }
 
