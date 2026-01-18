@@ -38,7 +38,7 @@ public class NoteHebdoController {
         description = "Permet de saisir la note d’un élève pour une semaine donnée"
     )
     @ApiResponse(responseCode = "200", description = "Note enregistrée")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
             @Valid @RequestBody NoteHebdoRequest request
@@ -52,7 +52,7 @@ public class NoteHebdoController {
         description = "Permet de modifier une note hebdomadaire existante"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
+    @PreAuthorize("hasRole('ENSEIGNANT','ADMIN')")
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteResponse> modifier(
             @PathVariable Long noteId,

@@ -39,7 +39,7 @@ public class NoteEndprufungController {
         description = "Permet de saisir la note finale (Endprüfung) d’un élève"
     )
     @ApiResponse(responseCode = "200", description = "Note enregistrée avec succès")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
             @Valid @RequestBody NoteEndprufungRequest request
@@ -53,7 +53,7 @@ public class NoteEndprufungController {
         description = "Permet de corriger ou ajuster une note finale existante"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée avec succès")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
+    @PreAuthorize("hasRole('ENSEIGNANT','ADMIN')")
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteResponse> modifier(
             @PathVariable Long noteId,
