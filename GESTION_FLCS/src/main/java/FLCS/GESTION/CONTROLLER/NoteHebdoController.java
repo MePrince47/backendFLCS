@@ -52,7 +52,7 @@ public class NoteHebdoController {
         description = "Permet de modifier une note hebdomadaire existante"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée")
-    @PreAuthorize("hasRole('ENSEIGNANT','ADMIN')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN')")
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteResponse> modifier(
             @PathVariable Long noteId,
@@ -67,7 +67,7 @@ public class NoteHebdoController {
         description = "Retourne toutes les notes hebdomadaires d’un niveau"
     )
     @ApiResponse(responseCode = "200", description = "Liste des notes")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN')")
     @GetMapping("/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParNiveau(
             @PathVariable Long niveauId

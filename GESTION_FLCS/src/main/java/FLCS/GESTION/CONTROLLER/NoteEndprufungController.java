@@ -53,7 +53,7 @@ public class NoteEndprufungController {
         description = "Permet de corriger ou ajuster une note finale existante"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée avec succès")
-    @PreAuthorize("hasRole('ENSEIGNANT','ADMIN')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN')")
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteResponse> modifier(
             @PathVariable Long noteId,
