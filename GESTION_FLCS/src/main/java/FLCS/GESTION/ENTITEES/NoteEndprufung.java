@@ -3,7 +3,6 @@ package FLCS.GESTION.ENTITEES;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.*;
-import java.time.LocalDate;
 
 @Entity
 @Data

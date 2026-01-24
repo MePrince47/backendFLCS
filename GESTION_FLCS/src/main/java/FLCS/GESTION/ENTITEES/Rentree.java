@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity

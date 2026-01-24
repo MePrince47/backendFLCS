@@ -1,6 +1,5 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.Resultat;
 import FLCS.GESTION.SERVICE.ResultatService;
 import FLCS.GESTION.EXPORT.ResultatPdfExporter;
 import FLCS.GESTION.DTO.ResultatResponse;

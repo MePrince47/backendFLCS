@@ -6,7 +6,6 @@ import lombok.*;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity

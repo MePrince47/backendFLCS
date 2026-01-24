@@ -2,7 +2,6 @@ package FLCS.GESTION.SERVICE;
 
 import FLCS.GESTION.ENTITEES.Utilisateur;
 import FLCS.GESTION.REPOSITORY.UtilisateurRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;

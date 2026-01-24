@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,6 +75,18 @@ public class PaiementController {
     @GetMapping("/eleves/{id}/resume")
     public PaiementResumeResponse resumePaiement(@PathVariable Long id) {
         return paiementService.getResumePaiement(id);
+    }
+
+    // GET_INFOS SUR LES PAIEMENTS DE TOUT LES ELEVES
+    @Operation(
+        summary = "Résumé des paiements",
+        description = "Retourne la situation financière globale de tout les élèves (payé, restant, statut)"
+    )
+    @ApiResponse(responseCode = "200", description = "Résumé financier")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    @GetMapping("/eleves/resume")
+    public List<PaiementResumeResponse> getResumePaiementsTousEleves() {
+        return paiementService.getResumePaiementsTousEleves();
     }
 
     // GET HISTORIQUE DE PAIEMENTS D'UN ELEVE

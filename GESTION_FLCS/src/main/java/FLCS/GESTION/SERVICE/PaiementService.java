@@ -6,8 +6,6 @@ import FLCS.GESTION.REPOSITORY.PaiementRepository;
 import FLCS.GESTION.REPOSITORY.EleveRepository;
 
 import FLCS.GESTION.EXCEPTION.EleveNotFoundException;
-
-import FLCS.GESTION.DTO.SearchResponse;
 import FLCS.GESTION.DTO.PaiementResponse;
 import FLCS.GESTION.DTO.PaiementResumeResponse;
 import FLCS.GESTION.DTO.PaiementHistoriqueResponse;
@@ -52,7 +50,7 @@ public class PaiementService {
         Double totalPaye = paiementRepository.totalPayeParEleve(eleve.getId());
         if (totalPaye == null) totalPaye = 0.0;
 
-        Double montantTotal = eleve.getMontantTotal();
+        Double montantTotal = eleve.getMontantProcedure();
         Double resteAPayer = montantTotal - totalPaye;
 
         //  BLOQUAGE si solde déjà réglé
@@ -109,12 +107,12 @@ public class PaiementService {
             .orElseThrow(() -> new EleveNotFoundException(eleveId));
 
         Double totalPaye = paiementRepository.totalPayeParEleve(eleveId);
-        Double reste = eleve.getMontantTotal() - totalPaye;
+        Double reste = eleve.getMontantProcedure() - totalPaye;
 
         return new PaiementResumeResponse(
             eleve.getId(),
             eleve.getNom() + " " + eleve.getPrenom(),
-            eleve.getMontantTotal(),
+            eleve.getMontantProcedure(),
             totalPaye,
             reste
         );
@@ -143,18 +141,36 @@ public class PaiementService {
             .orElseThrow(() -> new EleveNotFoundException(eleveId));
 
         Double totalPaye = paiementRepository.totalPayeParEleve(eleveId);
-        Double reste = eleve.getMontantTotal() - totalPaye;
+        Double reste = eleve.getMontantProcedure() - totalPaye;
 
         List<PaiementHistoriqueResponse> historique = historique(eleveId);
 
         return new PaiementExport(
             eleve.getNom() + " " + eleve.getPrenom(),
-            eleve.getMontantTotal(),
+            eleve.getMontantProcedure(),
             totalPaye,
             reste,
             historique
         );
     }
+
+    // EXPORT DES INFOS RELATIFS AUX PAIEMENTS DE TOUT LES ELEVES
+    @Transactional(readOnly = true)
+    public List<PaiementResumeResponse> getResumePaiementsTousEleves() {
+        return eleveRepository.findAll().stream().map(eleve -> {
+            Double totalPaye = paiementRepository.totalPayeParEleve(eleve.getId());
+            if (totalPaye == null) totalPaye = 0.0;
+            Double reste = eleve.getMontantProcedure() - totalPaye;
+            return new PaiementResumeResponse(
+                eleve.getId(),
+                eleve.getNom() + " " + eleve.getPrenom(),
+                eleve.getMontantProcedure(),
+                totalPaye,
+                reste
+            );
+        }).toList();
+    }
+
 
 
 

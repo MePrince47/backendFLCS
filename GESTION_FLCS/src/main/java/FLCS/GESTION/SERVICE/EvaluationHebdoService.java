@@ -1,17 +1,11 @@
 package FLCS.GESTION.SERVICE;
 
-import FLCS.GESTION.ENTITEES.NoteHebdo;
 import FLCS.GESTION.ENTITEES.EvaluationHebdo;
-import FLCS.GESTION.ENTITEES.Eleve;
 import FLCS.GESTION.ENTITEES.Niveau;
 
-import FLCS.GESTION.REPOSITORY.NoteHebdoRepository;
 import FLCS.GESTION.REPOSITORY.EvaluationHebdoRepository;
-import FLCS.GESTION.REPOSITORY.EleveRepository;
 import FLCS.GESTION.REPOSITORY.NiveauRepository;
 
-import FLCS.GESTION.DTO.NoteHebdoRequest;
-import FLCS.GESTION.DTO.NoteResponse;
 import FLCS.GESTION.DTO.NoteResponseDTO;
 import FLCS.GESTION.DTO.EvaluationHebdoResponse;
 

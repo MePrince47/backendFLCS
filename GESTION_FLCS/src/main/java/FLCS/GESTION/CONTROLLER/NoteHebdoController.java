@@ -1,6 +1,5 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.NoteHebdo;
 import FLCS.GESTION.SERVICE.NoteHebdoService;
 import FLCS.GESTION.DTO.NoteResponse;
 import FLCS.GESTION.DTO.NoteHebdoRequest;
@@ -8,7 +7,6 @@ import FLCS.GESTION.DTO.NoteHebdoRequest;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -38,7 +36,7 @@ public class NoteHebdoController {
         description = "Permet de saisir la note d’un élève pour une semaine donnée"
     )
     @ApiResponse(responseCode = "200", description = "Note enregistrée")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
             @Valid @RequestBody NoteHebdoRequest request
@@ -49,17 +47,25 @@ public class NoteHebdoController {
     // Modifier
     @Operation(
         summary = "Modifier une note hebdomadaire",
-        description = "Permet de modifier une note hebdomadaire existante"
+        description = "Modifie la note hebdomadaire d’un élève pour une évaluation donnée"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
-    @PutMapping("/{noteId}")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    @PutMapping("/eleve/{eleveId}/evaluation/{evaluationHebdoId}")
     public ResponseEntity<NoteResponse> modifier(
-            @PathVariable Long noteId,
+            @PathVariable Long eleveId,
+            @PathVariable Long evaluationHebdoId,
             @Valid @RequestBody NoteHebdoRequest request
     ) {
-        return ResponseEntity.ok(service.modifier(noteId, request));
+        return ResponseEntity.ok(
+            service.modifierParEleveEtEvaluation(
+                eleveId,
+                evaluationHebdoId,
+                request
+            )
+        );
     }
+
 
     // Toutes les notes d’un niveau
     @Operation(

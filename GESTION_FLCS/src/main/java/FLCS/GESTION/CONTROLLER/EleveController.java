@@ -1,6 +1,5 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.Eleve;
 import FLCS.GESTION.SERVICE.EleveService;
 import FLCS.GESTION.DTO.SearchResponse;
 import FLCS.GESTION.DTO.EleveResponse;

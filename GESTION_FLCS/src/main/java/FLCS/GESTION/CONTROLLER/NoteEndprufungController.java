@@ -1,6 +1,5 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.NoteEndprufung;
 import FLCS.GESTION.SERVICE.NoteEndprufungService;
 import FLCS.GESTION.DTO.NoteResponse;
 import FLCS.GESTION.DTO.NoteEndprufungRequest;
@@ -8,7 +7,6 @@ import FLCS.GESTION.DTO.NoteEndprufungRequest;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -39,7 +37,7 @@ public class NoteEndprufungController {
         description = "Permet de saisir la note finale (Endprüfung) d’un élève"
     )
     @ApiResponse(responseCode = "200", description = "Note enregistrée avec succès")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")   
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
             @Valid @RequestBody NoteEndprufungRequest request
@@ -50,17 +48,25 @@ public class NoteEndprufungController {
     // Modifier une note Endprufung
     @Operation(
         summary = "Modifier une note d’examen final",
-        description = "Permet de corriger ou ajuster une note finale existante"
+        description = "Modifie la note d’Endprüfung d’un élève pour un niveau donné"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée avec succès")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
-    @PutMapping("/{noteId}")
+    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    @PutMapping("/eleve/{eleveId}/niveau/{niveauId}")
     public ResponseEntity<NoteResponse> modifier(
-            @PathVariable Long noteId,
+            @PathVariable Long eleveId,
+            @PathVariable Long niveauId,
             @Valid @RequestBody NoteEndprufungRequest request
     ) {
-        return ResponseEntity.ok(service.modifier(noteId, request));
+        return ResponseEntity.ok(
+            service.modifierParEleveEtNiveau(
+                eleveId,
+                niveauId,
+                request
+            )
+        );
     }
+
 
     // Résultats finaux d’un niveau
     @Operation(

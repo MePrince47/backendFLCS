@@ -91,13 +91,34 @@ public class NoteHebdoService {
     }
 
     // UPDATE
-    public NoteResponse modifier(Long noteId, NoteHebdoRequest req) {
+        public NoteResponse modifierParEleveEtEvaluation(
+                Long eleveId,
+                Long evaluationHebdoId,
+                NoteHebdoRequest req
+        ) {
+        NoteHebdo note = noteRepo
+                .findByEvaluationHebdo_IdAndEleve_Id(evaluationHebdoId, eleveId)
+                .orElseThrow(() ->
+                new IllegalArgumentException(
+                        "Note hebdomadaire introuvable pour cet élève"
+                )
+                );
 
-        NoteHebdo note = noteRepo.findById(noteId)
-                .orElseThrow(() -> new IllegalArgumentException("Note introuvable"));
+        Niveau niveau = note.getEvaluationHebdo().getNiveau();
 
-        validerNotes(note.getEvaluationHebdo().getNiveau(),
-                req.les(), req.hor(), req.schreib(), req.gramm(), req.spre()
+        if (niveau.isCloture()) {
+                throw new IllegalStateException(
+                "Niveau clôturé, modification interdite"
+                );
+        }
+
+        validerNotes(
+                niveau,
+                req.les(),
+                req.hor(),
+                req.schreib(),
+                req.gramm(),
+                req.spre()
         );
 
         note.setLes(req.les());
@@ -107,7 +128,8 @@ public class NoteHebdoService {
         note.setSpre(req.spre());
 
         return toResponse(note);
-    }
+        }
+
 
     // READ : toutes les notes d’un niveau
     @Transactional(readOnly = true)

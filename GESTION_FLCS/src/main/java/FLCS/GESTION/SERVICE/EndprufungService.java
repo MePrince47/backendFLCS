@@ -1,17 +1,10 @@
 package FLCS.GESTION.SERVICE;
 
-import FLCS.GESTION.ENTITEES.NoteEndprufung;
 import FLCS.GESTION.ENTITEES.Endprufung;
-import FLCS.GESTION.ENTITEES.Eleve;
 import FLCS.GESTION.ENTITEES.Niveau;
 
-import FLCS.GESTION.REPOSITORY.NoteEndprufungRepository;
 import FLCS.GESTION.REPOSITORY.EndprufungRepository;
-import FLCS.GESTION.REPOSITORY.EleveRepository;
 import FLCS.GESTION.REPOSITORY.NiveauRepository;
-
-import FLCS.GESTION.DTO.NoteEndprufungRequest;
-import FLCS.GESTION.DTO.NoteResponse;
 import FLCS.GESTION.DTO.NoteResponseDTO;
 import FLCS.GESTION.DTO.EndprufungResponse;
 import FLCS.GESTION.DTO.EndprufungRequest; 
@@ -21,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.time.LocalDate;
 
 @Service
 @Transactional

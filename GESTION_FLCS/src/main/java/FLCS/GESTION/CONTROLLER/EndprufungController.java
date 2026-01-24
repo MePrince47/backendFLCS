@@ -1,9 +1,7 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.Endprufung;
 import FLCS.GESTION.SERVICE.EndprufungService;
 
-import FLCS.GESTION.DTO.NoteResponseDTO;
 import FLCS.GESTION.DTO.EndprufungResponse; 
 import FLCS.GESTION.DTO.EndprufungRequest; 
 
@@ -16,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-import java.time.LocalDate;
 
 @Tag(
     name = "Examens finaux (Endprüfung)",

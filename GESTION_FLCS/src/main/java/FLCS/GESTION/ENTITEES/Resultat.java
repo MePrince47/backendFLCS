@@ -33,6 +33,9 @@ public class Resultat {
     private Double endGramm;
     private Double endSpre;
 
+    // Notes Soutenance
+    private Double soutenance;
+
     private Double moyenneGenerale;
     private boolean admis;
 }

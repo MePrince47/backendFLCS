@@ -44,12 +44,12 @@ public class EleveService {
             e.getNom(),
             e.getPrenom(),
             e.getDateNaiss(),
+            e.getLieuNaiss(),
             e.getNiveauScolaire(),
             e.getTypeProcedure(),    
-            e.getMontantTotal(),      
+            e.getMontantProcedure(),      
             e.getTelCandidat(),
-            e.getTelParent(),
-            e.getStatut(),            
+            e.getTelParent(),          
             e.getPartenaire() != null ? e.getPartenaire().getNomPartenaire() : null,
             e.getNiveauLangue() != null ? e.getNiveauLangue().getCode() : null,
             e.getRentree() != null ? e.getRentree().getNomRentree() : null
@@ -93,12 +93,12 @@ public class EleveService {
             .nom(request.nom())
             .prenom(request.prenom())
             .dateNaiss(request.dateNaiss())
+            .lieuNaiss(request.lieuNaiss())
             .niveauScolaire(request.niveauScolaire())
             .typeProcedure(request.typeProcedure())
-            .montantTotal(request.montantTotal()) 
+            .montantProcedure(request.montantProcedure()) 
             .telCandidat(request.telCandidat())
             .telParent(request.telParent())
-            .statut(request.statut())
             .partenaire(partenaire)
             .niveauLangue(niveau)
             .rentree(niveau.getRentree()) // peut être null
@@ -140,11 +140,11 @@ public class EleveService {
         existant.setNom(request.nom());
         existant.setPrenom(request.prenom());
         existant.setDateNaiss(request.dateNaiss());
+        existant.setLieuNaiss(request.lieuNaiss());
         existant.setNiveauScolaire(request.niveauScolaire());
         existant.setTypeProcedure(request.typeProcedure());
         existant.setTelCandidat(request.telCandidat());
         existant.setTelParent(request.telParent());
-        existant.setStatut(request.statut());
 
         Partenaire partenaire = partenaireRepository
             .findByNomPartenaire(request.nomPartenaire())

@@ -4,9 +4,6 @@ package FLCS.GESTION.ENTITEES;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

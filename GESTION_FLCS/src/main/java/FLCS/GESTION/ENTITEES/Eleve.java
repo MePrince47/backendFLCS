@@ -28,6 +28,9 @@ public class Eleve {
     @NotNull(message = "La date de naissance est obligatoire")
     @Past(message = "La date de naissance doit être dans le passé")
     private LocalDate dateNaiss;
+
+    @NotBlank
+    private String lieuNaiss;
     
     @NotBlank
     private String niveauScolaire;
@@ -38,15 +41,13 @@ public class Eleve {
     @Column(nullable = false)
     @NotNull(message = "Le montant total est obligatoire")
     @Positive(message = "Le montant total doit être supérieur à 0")
-    private Double montantTotal;
+    private Double montantProcedure;
 
     
     @NotBlank
     private String telCandidat;
     @NotBlank
     private String telParent;
-    @NotBlank
-    private String statut;
 
     @ManyToOne
     private Partenaire partenaire;

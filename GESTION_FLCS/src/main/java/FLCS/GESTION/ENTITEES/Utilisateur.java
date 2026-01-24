@@ -4,8 +4,6 @@ package FLCS.GESTION.ENTITEES;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Data              // Génère getters, setters, toString, equals, hashCode
 @NoArgsConstructor // Génère un constructeur sans arguments

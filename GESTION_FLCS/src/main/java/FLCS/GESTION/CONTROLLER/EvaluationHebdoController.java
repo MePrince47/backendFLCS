@@ -1,9 +1,7 @@
 package FLCS.GESTION.CONTROLLER;
 
-import FLCS.GESTION.ENTITEES.EvaluationHebdo;
 import FLCS.GESTION.SERVICE.EvaluationHebdoService;
 
-import FLCS.GESTION.DTO.NoteResponseDTO;
 import FLCS.GESTION.DTO.EvaluationHebdoResponse;
 
 import org.springframework.web.bind.annotation.*;

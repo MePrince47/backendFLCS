@@ -3,8 +3,6 @@ package FLCS.GESTION.SERVICE;
 import FLCS.GESTION.ENTITEES.Partenaire;
 import FLCS.GESTION.REPOSITORY.PartenaireRepository;
 
-import FLCS.GESTION.EXCEPTION.EleveNotFoundException;
-import FLCS.GESTION.DTO.SearchResponse;
 import FLCS.GESTION.DTO.PartenaireResponse;
 import FLCS.GESTION.DTO.PartenaireRequest;
 import org.springframework.stereotype.Service;

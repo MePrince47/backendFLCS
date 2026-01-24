@@ -10,13 +10,13 @@ public record EleveRequest(
 
     @NotNull @Past
     LocalDate dateNaiss,
+    @NotBlank String lieuNaiss,
 
     @NotBlank String niveauScolaire,
     @NotBlank String typeProcedure,
-    @NotNull Double montantTotal,
+    @NotNull Double montantProcedure,
     @NotBlank String telCandidat,
     @NotBlank String telParent,
-    @NotBlank String statut,
 
     // références simples
     @NotBlank String codeNiveau,

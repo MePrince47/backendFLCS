@@ -91,19 +91,34 @@ public class NoteEndprufungService {
     }
 
     // UPDATE
-    public NoteResponse modifier(Long noteId, NoteEndprufungRequest req) {
+    public NoteResponse modifierParEleveEtNiveau(
+        Long eleveId,
+        Long niveauId,
+        NoteEndprufungRequest req
+        ) {
+        NoteEndprufung note = noteRepo
+                .findByEleve_IdAndEndprufung_Niveau_Id(eleveId, niveauId)
+                .orElseThrow(() ->
+                new IllegalArgumentException(
+                        "Note d’Endprüfung introuvable pour cet élève"
+                )
+                );
 
-        NoteEndprufung note = noteRepo.findById(noteId)
-                .orElseThrow(() -> new IllegalArgumentException("Note introuvable"));
+        Niveau niveau = note.getEndprufung().getNiveau();
 
-        if (note.getEndprufung().getNiveau().isCloture()) {
-        throw new IllegalStateException(
+        if (niveau.isCloture()) {
+                throw new IllegalStateException(
                 "Niveau clôturé, modification interdite"
-        );
+                );
         }
 
-        validerNotes(note.getEndprufung().getNiveau(),
-                req.les(), req.hor(), req.schreib(), req.gramm(), req.spre()
+        validerNotes(
+                niveau,
+                req.les(),
+                req.hor(),
+                req.schreib(),
+                req.gramm(),
+                req.spre()
         );
 
         note.setLes(req.les());
@@ -114,6 +129,7 @@ public class NoteEndprufungService {
 
         return toResponse(note);
     }
+
 
     // READ : résultats finaux d’un niveau
     @Transactional(readOnly = true)
