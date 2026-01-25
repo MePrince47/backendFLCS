@@ -34,7 +34,7 @@ public class EvaluationHebdoController {
         description = "Génère automatiquement les 7 semaines d’évaluations pour un niveau lors de la creation d'une rentrée"
     )
     @ApiResponse(responseCode = "200", description = "Évaluations créées")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @PostMapping("/niveau/{niveauId}")
     public ResponseEntity<Void> creerPourNiveau(
             @PathVariable Long niveauId

@@ -73,7 +73,7 @@ public class NoteHebdoController {
         description = "Retourne toutes les notes hebdomadaires d’un niveau"
     )
     @ApiResponse(responseCode = "200", description = "Liste des notes")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
+    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN')")
     @GetMapping("/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParNiveau(
             @PathVariable Long niveauId
