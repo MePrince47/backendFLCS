@@ -154,7 +154,7 @@ public class PaiementService {
         );
     }
 
-    // EXPORT DES INFOS RELATIFS AUX PAIEMENTS DE TOUT LES ELEVES
+    // EXPORT DES INFOS RELATIFS AUX PAIEMENTS DE TOUS LES ELEVES
     @Transactional(readOnly = true)
     public List<PaiementResumeResponse> getResumePaiementsTousEleves() {
         return eleveRepository.findAll().stream().map(eleve -> {

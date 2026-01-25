@@ -68,7 +68,7 @@ public class PaiementController {
     // GET_INFOS SUR LES PAIEMENTS D'UN ELEVE
     @Operation(
         summary = "Résumé des paiements",
-        description = "Retourne la situation financière globale d’un élève (payé, restant, statut)"
+        description = "Retourne la situation financière globale d’un élève (montant total, payé, restant)"
     )
     @ApiResponse(responseCode = "200", description = "Résumé financier")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
@@ -77,10 +77,10 @@ public class PaiementController {
         return paiementService.getResumePaiement(id);
     }
 
-    // GET_INFOS SUR LES PAIEMENTS DE TOUT LES ELEVES
+    // GET_INFOS SUR LES PAIEMENTS DE TOUS LES ELEVES
     @Operation(
         summary = "Résumé des paiements",
-        description = "Retourne la situation financière globale de tout les élèves (payé, restant, statut)"
+        description = "Retourne la situation financière globale de tous les élèves (montant total, payé, restant)"
     )
     @ApiResponse(responseCode = "200", description = "Résumé financier")
     @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
