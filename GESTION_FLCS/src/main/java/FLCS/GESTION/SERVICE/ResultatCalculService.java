@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,7 +44,7 @@ public class ResultatCalculService {
 
         String code = niveau.getCode().split("_")[0]; // A1_SEPT → A1
 
-        // ================= NOTES HEBDO =================
+        /* ================= NOTES HEBDO ================= */
         List<NoteHebdo> hebdos =
             noteHebdoRepo.findByEleve_IdAndEvaluationHebdo_Niveau_Id(eleveId, niveauId);
 
@@ -57,9 +58,9 @@ public class ResultatCalculService {
         double hGra = moyenne(hebdos.stream().map(NoteHebdo::getGramm).toList());
         double hSpr = moyenne(hebdos.stream().map(NoteHebdo::getSpre).toList());
 
-        double moyHebdo = (hLes + hHor + hSch + hGra + hSpr) / 5;
+        double moyHebdo20 = moyenne(List.of(hLes, hHor, hSch, hGra, hSpr)); // /20
 
-        // ================= ENDPRÜFUNG =================
+        /* ================= ENDPRÜFUNG ================= */
         NoteEndprufung end =
             noteEndRepo.findByEleve_IdAndEndprufung_Niveau_Id(eleveId, niveauId)
                 .orElse(null);
@@ -70,85 +71,83 @@ public class ResultatCalculService {
         Double eGra = end != null ? end.getGramm() : null;
         Double eSpr = end != null ? end.getSpre() : null;
 
-        double moyEnd = end != null
+        double moyEnd20 = end != null
             ? moyenne(List.of(eLes, eHor, eSch, eGra, eSpr))
             : 0;
 
-        // ================= SOUTENANCE (A2 / B2) =================
+        /* ================= SOUTENANCE ================= */
         Double soutenance =
             (code.equals("A2") || code.equals("B2"))
                 ? soutenanceRepo.findByEleve_IdAndNiveau_Id(eleveId, niveauId)
-                    .map(s -> s.getNote()) // SUR 20
+                    .map(s -> s.getNote()) // sur 20
                     .orElse(null)
                 : null;
 
-        // ======================= A1 =======================
+        /* ======================= A1 ======================= */
         if (code.equals("A1")) {
 
-            double moyenneGenerale =
-                (moyHebdo * 0.6) +
-                (moyEnd * 0.4);
+            double hebdoPct = moyHebdo20 * 2; // 40 %
+            double endPct   = moyEnd20 * 3;   // 60 %
+            double total    = hebdoPct + endPct;
 
             return new ResultatCalculDTO(
                 eleveId, niveauId,
-                hLes, hHor, hSch, hGra, hSpr,    // ON STOCKE LES MOY. HEBDO
+                hLes, hHor, hSch, hGra, hSpr,
                 eLes, eHor, eSch, eGra, eSpr,
                 null,
-                moyenneGenerale,
-                moyenneGenerale >= niveau.getBareme()
+                total,
+                total >= niveau.getBareme()
             );
-
         }
 
-        // ======================= A2 =======================
+        /* ======================= A2 ======================= */
         if (code.equals("A2")) {
 
-            double moyenneGenerale =
-                (moyEnd * 0.5) +
-                (moyHebdo * 0.3) +
-                (soutenance != null ? soutenance * 0.2 : 0);
+            double hebdoPct = moyHebdo20 * 1.5; // 30 %
+            double endPct   = moyEnd20 * 2.5;   // 50 %
+            double soutPct  = soutenance != null ? soutenance : 0; // 20 %
+
+            double total = hebdoPct + endPct + soutPct;
 
             return new ResultatCalculDTO(
                 eleveId, niveauId,
-                hLes, hHor, hSch, hGra, hSpr,    // ON STOCKE LES MOY. HEBDO
+                hLes, hHor, hSch, hGra, hSpr,
                 eLes, eHor, eSch, eGra, eSpr,
-                null,
-                moyenneGenerale,
-                moyenneGenerale >= niveau.getBareme()
+                soutenance,
+                total,
+                total >= niveau.getBareme()
             );
-
         }
 
-        // ======================= B1 / B2 =======================
-        double mLes = moyenneFinale(hLes, end, NoteEndprufung::getLes, 0.4, 0.6);
-        double mHor = moyenneFinale(hHor, end, NoteEndprufung::getHor, 0.4, 0.6);
-        double mSch = moyenneFinale(hSch, end, NoteEndprufung::getSchreib, 0.4, 0.6);
-        double mGra = moyenneFinale(hGra, end, NoteEndprufung::getGramm, 0.4, 0.6);
-        double mSpr = moyenneFinale(hSpr, end, NoteEndprufung::getSpre, 0.4, 0.6);
-
-        double seuil = niveau.getBareme() * 0.6;
+        /* ======================= B1 / B2 ======================= */
+        double mLes = moyenneFinale(hLes, end, NoteEndprufung::getLes);
+        double mHor = moyenneFinale(hHor, end, NoteEndprufung::getHor);
+        double mSch = moyenneFinale(hSch, end, NoteEndprufung::getSchreib);
+        double mGra = moyenneFinale(hGra, end, NoteEndprufung::getGramm);
+        double mSpr = moyenneFinale(hSpr, end, NoteEndprufung::getSpre);
 
         boolean admis =
-            mLes >= seuil &&
-            mHor >= seuil &&
-            mSch >= seuil &&
-            mGra >= seuil &&
-            mSpr >= seuil;
+            mLes >= 12 &&
+            mHor >= 12 &&
+            mSch >= 12 &&
+            mGra >= 12 &&
+            mSpr >= 12;
 
         return new ResultatCalculDTO(
             eleveId, niveauId,
             mLes, mHor, mSch, mGra, mSpr,
             eLes, eHor, eSch, eGra, eSpr,
-            soutenance,   // seulement affichée pour B2
-            null,         // PAS de moyenne générale
+            soutenance,
+            null,
             admis
         );
     }
 
-    // ================= UTILITAIRES =================
+    /* ================= UTILITAIRES ================= */
 
     private double moyenne(List<Double> valeurs) {
         return valeurs.stream()
+            .filter(v -> v != null)
             .mapToDouble(Double::doubleValue)
             .average()
             .orElse(0);
@@ -157,13 +156,9 @@ public class ResultatCalculService {
     private double moyenneFinale(
         double hebdo,
         NoteEndprufung end,
-        java.util.function.Function<NoteEndprufung, Double> getter,
-        double cHebdo,
-        double cEnd
+        Function<NoteEndprufung, Double> getter
     ) {
         if (end == null) return hebdo;
-        return (hebdo * cHebdo) + (getter.apply(end) * cEnd);
+        return (hebdo * 0.4) + (getter.apply(end) * 0.6);
     }
 }
-
-
