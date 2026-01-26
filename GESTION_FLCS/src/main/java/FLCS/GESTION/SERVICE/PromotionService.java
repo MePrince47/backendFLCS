@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 @Transactional
 public class PromotionService {
@@ -23,9 +22,9 @@ public class PromotionService {
     private final EleveRepository eleveRepo;
 
     public PromotionService(
-        NiveauRepository niveauRepo,
-        ResultatRepository resultatRepo,
-        EleveRepository eleveRepo
+            NiveauRepository niveauRepo,
+            ResultatRepository resultatRepo,
+            EleveRepository eleveRepo
     ) {
         this.niveauRepo = niveauRepo;
         this.resultatRepo = resultatRepo;
@@ -35,21 +34,35 @@ public class PromotionService {
     public void promouvoirNiveau(Long niveauId) {
 
         Niveau niveau = niveauRepo.findById(niveauId)
-            .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable"));
+                .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable"));
 
         if (!niveau.isCloture()) {
             throw new IllegalStateException("Niveau non clôturé");
         }
 
-        Niveau niveauSuivant =
-            niveauRepo.findByCode(codeSuivant(niveau.getCode()))
-                .orElseThrow(() ->
-                    new IllegalStateException("Niveau suivant introuvable")
-                );
+        // Extraire le code de base et le suffixe
+        String[] parts = niveau.getCode().split("_", 2); // ["A1", "SEPTEMBRE_2025"]
+        String base = parts[0];
+        String suffixe = parts.length > 1 ? parts[1] : "";
 
-        List<Resultat> resultats =
-            resultatRepo.findByNiveau_Id(niveauId);
+        // Trouver le code du niveau suivant
+        String niveauSuivantBase = codeSuivant(base);
+        if (niveauSuivantBase == null) {
+            // Niveau final atteint, rien à faire
+            return;
+        }
 
+        String codeNiveauSuivant = suffixe.isEmpty() ? niveauSuivantBase : niveauSuivantBase + "_" + suffixe;
+
+        Niveau niveauSuivant = niveauRepo.findByCode(codeNiveauSuivant)
+                .orElse(null); // on ignore si le niveau suivant n'existe pas encore
+
+        if (niveauSuivant == null) {
+            return; // pas de niveau suivant disponible
+        }
+
+        // Promouvoir les élèves admis
+        List<Resultat> resultats = resultatRepo.findByNiveau_Id(niveauId);
         for (Resultat r : resultats) {
             if (r.isAdmis()) {
                 Eleve e = r.getEleve();
@@ -64,7 +77,7 @@ public class PromotionService {
             case "A1" -> "A2";
             case "A2" -> "B1";
             case "B1" -> "B2";
-            default -> throw new IllegalStateException("Niveau final atteint");
+            default -> null; // Niveau final atteint
         };
     }
 }
