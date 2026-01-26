@@ -53,22 +53,24 @@ public class ResultatService {
             .eleve(eleve)
             .niveau(niveau)
 
-            // moyennes finales
+            /* ================== MOYENNES HEBDO ================== */
             .moyLes(calc.moyLes())
             .moyHor(calc.moyHor())
             .moySchreib(calc.moySchreib())
             .moyGramm(calc.moyGramm())
             .moySpre(calc.moySpre())
 
-            // notes endprüfung (AFFICHAGE SEULEMENT)
+            /* ================== ENDPRÜFUNG (BRUT) ================== */
             .endLes(calc.endLes())
             .endHor(calc.endHor())
             .endSchreib(calc.endSchreib())
             .endGramm(calc.endGramm())
             .endSpre(calc.endSpre())
 
-            .moyenneGenerale(calc.moyenneGenerale())
+            /* ================== RÉSULTAT OFFICIEL ================== */
+            .moyenneGenerale(calc.moyenneGenerale()) // SUR 100 %
             .admis(calc.admis())
+
             .build();
 
         return toResponse(resultatRepo.save(resultat));
@@ -90,7 +92,7 @@ public class ResultatService {
             .toList();
     }
 
-    // ===== DTO mapping =====
+    // ===================== DTO MAPPING =====================
     private ResultatResponse toResponse(Resultat r) {
         return new ResultatResponse(
             r.getId(),
@@ -108,7 +110,7 @@ public class ResultatService {
             r.getEndGramm(),
             r.getEndSpre(),
 
-            r.getMoyenneGenerale(),
+            r.getMoyenneGenerale(), // %
             r.isAdmis()
         );
     }
