@@ -64,18 +64,23 @@ public class ResultatPdfExporter {
 
             // ================= TABLES =================
             if (codeNiveau.equals("A1")) {
+
                 document.add(sectionTitle("RÉSULTATS DÉTAILLÉS"));
-                PdfPTable table = creerTableA1();
-                resultats.forEach(r -> ajouterLigneA1(table, r));
-                document.add(table);
+                PdfPTable t = creerTableA1();
+                resultats.forEach(r -> ajouterLigneA1(t, r));
+                document.add(t);
 
             } else if (codeNiveau.equals("A2")) {
-                document.add(sectionTitle("RÉSULTATS DÉTAILLÉS"));
-                PdfPTable table = creerTableA2();
-                resultats.forEach(r -> ajouterLigneA2(table, r));
-                document.add(table);
 
-            } else {
+                document.add(sectionTitle("RÉSULTATS DÉTAILLÉS"));
+                PdfPTable t = creerTableA2();
+                resultats.forEach(r -> ajouterLigneA2(t, r));
+                document.add(t);
+
+            } else if (codeNiveau.equals("B1") || codeNiveau.equals("B2")) {
+
+                boolean avecSoutenance = codeNiveau.equals("B2");
+
                 document.add(sectionTitle("NOTES ENDPRÜFUNG"));
                 PdfPTable end = creerTableEndprufung();
                 resultats.forEach(r -> ajouterLigneEndprufung(end, r));
@@ -83,18 +88,14 @@ public class ResultatPdfExporter {
 
                 document.add(Chunk.NEWLINE);
 
-                document.add(sectionTitle("RÉSULTATS FINAUX"));
-                PdfPTable fin = creerTableFinale();
-                resultats.forEach(r -> ajouterLigneFinale(fin, r));
+                document.add(sectionTitle("RÉSULTATS GÉNÉRAUX"));
+                PdfPTable fin = creerTableResultatsB1B2(avecSoutenance);
+                resultats.forEach(r -> ajouterLigneResultatsB1B2(fin, r, avecSoutenance));
                 document.add(fin);
             }
 
             document.add(Chunk.NEWLINE);
-
-            // ================= STATS + PREMIER =================
             ajouterStatistiquesClasse(document, resultats);
-
-            // ================= SIGNATURES =================
             ajouterSignatures(document);
 
             document.close();
@@ -112,31 +113,57 @@ public class ResultatPdfExporter {
     private PdfPTable creerTableA1() {
         PdfPTable t = new PdfPTable(9);
         t.setWidthPercentage(100);
-        headers(t, "Élève","Lesen","Hören","Schreiben","Grammatik","Sprechen",
-                   "Moy. Hebdo (%)","Moyenne Générale (%)","Décision");
+        headers(t,
+            "Élève",
+            "Lesen","Hören","Schreiben","Grammatik","Sprechen",
+            "Hebdo (40%)","Endprüfung (60%)","Total (%)"
+        );
         return t;
     }
 
     private PdfPTable creerTableA2() {
         PdfPTable t = new PdfPTable(10);
         t.setWidthPercentage(100);
-        headers(t, "Élève","Lesen","Hören","Schreiben","Grammatik","Sprechen",
-                   "Moy. Hebdo (%)","Soutenance","Moyenne Générale (%)","Décision");
+        headers(t,
+            "Élève",
+            "Lesen","Hören","Schreiben","Grammatik","Sprechen",
+            "Hebdo (40%)","Endprüfung (50%)","Soutenance","Total (%)"
+        );
         return t;
     }
 
     private PdfPTable creerTableEndprufung() {
         PdfPTable t = new PdfPTable(6);
         t.setWidthPercentage(100);
-        headers(t, "Élève","Lesen","Hören","Schreiben","Grammatik","Sprechen");
+        headers(t,
+            "Élève",
+            "Lesen","Hören","Schreiben","Grammatik","Sprechen"
+        );
         return t;
     }
 
-    private PdfPTable creerTableFinale() {
-        PdfPTable t = new PdfPTable(8);
+    private PdfPTable creerTableResultatsB1B2(boolean avecSoutenance) {
+        PdfPTable t = new PdfPTable(avecSoutenance ? 6 : 5);
         t.setWidthPercentage(100);
-        headers(t, "Élève","Moy. Lesen","Moy. Hören","Moy. Schreiben",
-                   "Moy. Grammatik","Moy. Sprechen","Moyenne","Décision");
+
+        if (avecSoutenance) {
+            headers(t,
+                "Élève",
+                "Hebdo (40%)",
+                "Endprüfung (60%)",
+                "Soutenance",
+                "Total (%)",
+                "Décision"
+            );
+        } else {
+            headers(t,
+                "Élève",
+                "Hebdo (40%)",
+                "Endprüfung (60%)",
+                "Total (%)",
+                "Décision"
+            );
+        }
         return t;
     }
 
@@ -146,80 +173,132 @@ public class ResultatPdfExporter {
 
     private void ajouterLigneA1(PdfPTable t, Resultat r) {
         t.addCell(cellNom(r));
-        t.addCell(noteCell(r.getEndLes(), r));
-        t.addCell(noteCell(r.getEndHor(), r));
-        t.addCell(noteCell(r.getEndSchreib(), r));
-        t.addCell(noteCell(r.getEndGramm(), r));
-        t.addCell(noteCell(r.getEndSpre(), r));
-        t.addCell(cellPercent(moyHebdoRobuste(r)));
+        ajouterNotesEnd(t, r);
+        t.addCell(cellPercent(hebdoPct(r)));
+        t.addCell(cellPercent(endPct(r)));
         t.addCell(cellPercent(r.getMoyenneGenerale()));
-        t.addCell(cellDecision(r));
     }
 
     private void ajouterLigneA2(PdfPTable t, Resultat r) {
-        ajouterLigneA1(t, r);
-        t.addCell(noteCell(r.getSoutenance(), r));
+        t.addCell(cellNom(r));
+        ajouterNotesEnd(t, r);
+        t.addCell(cellPercent(hebdoPct(r)));
+        t.addCell(cellPercent(endPct(r)));
+        t.addCell(noteCell(r.getSoutenance()));
+        t.addCell(cellPercent(r.getMoyenneGenerale()));
     }
 
     private void ajouterLigneEndprufung(PdfPTable t, Resultat r) {
         t.addCell(cellNom(r));
-        t.addCell(noteCell(r.getEndLes(), r));
-        t.addCell(noteCell(r.getEndHor(), r));
-        t.addCell(noteCell(r.getEndSchreib(), r));
-        t.addCell(noteCell(r.getEndGramm(), r));
-        t.addCell(noteCell(r.getEndSpre(), r));
+        ajouterNotesEnd(t, r);
     }
 
-    private void ajouterLigneFinale(PdfPTable t, Resultat r) {
+    private void ajouterLigneResultatsB1B2(
+        PdfPTable t,
+        Resultat r,
+        boolean avecSoutenance
+    ) {
         t.addCell(cellNom(r));
-        t.addCell(noteCell(r.getMoyLes(), r));
-        t.addCell(noteCell(r.getMoyHor(), r));
-        t.addCell(noteCell(r.getMoySchreib(), r));
-        t.addCell(noteCell(r.getMoyGramm(), r));
-        t.addCell(noteCell(r.getMoySpre(), r));
-        t.addCell(noteCell(r.getMoyenneGenerale(), r));
-        t.addCell(cellDecision(r));
+        t.addCell(cellPercent(hebdoPct(r)));
+        t.addCell(cellPercent(endPct(r)));
+
+        if (avecSoutenance) {
+            t.addCell(noteCell(r.getSoutenance()));
+        }
+
+        t.addCell(cellTotal(r));      // ✅ couleur
+        t.addCell(cellDecision(r));   // ✅ B1 / B2 uniquement
+    }
+
+    private void ajouterNotesEnd(PdfPTable t, Resultat r) {
+        t.addCell(noteCell(r.getEndLes()));
+        t.addCell(noteCell(r.getEndHor()));
+        t.addCell(noteCell(r.getEndSchreib()));
+        t.addCell(noteCell(r.getEndGramm()));
+        t.addCell(noteCell(r.getEndSpre()));
+    }
+
+    // =========================================================
+    // ======================= CALCULS =========================
+    // =========================================================
+
+    private Double moyHebdo(Resultat r) {
+        Double[] v = {
+            r.getMoyLes(), r.getMoyHor(),
+            r.getMoySchreib(), r.getMoyGramm(), r.getMoySpre()
+        };
+        return Stream.of(v)
+            .filter(x -> x != null)
+            .mapToDouble(Double::doubleValue)
+            .average()
+            .orElse(0);
+    }
+
+    private Double hebdoPct(Resultat r) {
+        return (moyHebdo(r) / 20.0) * 40.0;
+    }
+
+    private Double endPct(Resultat r) {
+        Double[] v = {
+            r.getEndLes(), r.getEndHor(),
+            r.getEndSchreib(), r.getEndGramm(), r.getEndSpre()
+        };
+        double moy = Stream.of(v)
+            .filter(x -> x != null)
+            .mapToDouble(Double::doubleValue)
+            .average()
+            .orElse(0);
+        return (moy / 20.0) * 60.0;
     }
 
     // =========================================================
     // ======================= UTILS ===========================
     // =========================================================
 
-    /** MOYENNE HEBDO SÉCURISÉE */
-    private Double moyHebdoRobuste(Resultat r) {
-        Double[] v = {
-            r.getMoyLes(), r.getMoyHor(),
-            r.getMoySchreib(), r.getMoyGramm(), r.getMoySpre()
-        };
-        long n = Stream.of(v).filter(x -> x != null).count();
-        if (n == 0) return null;
-        return Stream.of(v).filter(x -> x != null).mapToDouble(Double::doubleValue).average().orElse(0);
-    }
-
-    private PdfPCell noteCell(Double v, Resultat r) {
+    private PdfPCell noteCell(Double v) {
         PdfPCell c = new PdfPCell(new Phrase(val(v)));
         c.setHorizontalAlignment(Element.ALIGN_CENTER);
         if (v != null) {
-            c.setBackgroundColor(v >= 12 ? new Color(200,255,200) : new Color(255,200,200));
+            c.setBackgroundColor(
+                v >= 12 ? new Color(210,255,210) : new Color(255,210,210)
+            );
         }
         return c;
     }
 
     private PdfPCell cellNom(Resultat r) {
-        return new PdfPCell(new Phrase(
-            r.getEleve().getNom() + " " + r.getEleve().getPrenom()
-        ));
-    }
-
-    private PdfPCell cellDecision(Resultat r) {
-        PdfPCell c = new PdfPCell(new Phrase(r.isAdmis() ? "ADMIS" : "AJOURNÉ"));
-        c.setHorizontalAlignment(Element.ALIGN_CENTER);
-        c.setBackgroundColor(r.isAdmis() ? Color.GREEN : Color.PINK);
-        return c;
+        return new PdfPCell(
+            new Phrase(r.getEleve().getNom() + " " + r.getEleve().getPrenom())
+        );
     }
 
     private PdfPCell cellPercent(Double v) {
-        return new PdfPCell(new Phrase(v == null ? "-" : String.format("%.2f %%", v)));
+        PdfPCell c = new PdfPCell(
+            new Phrase(v == null ? "-" : String.format("%.2f %%", v))
+        );
+        c.setHorizontalAlignment(Element.ALIGN_CENTER);
+        return c;
+    }
+
+    private PdfPCell cellTotal(Resultat r) {
+        Double v = r.getMoyenneGenerale();
+        PdfPCell c = new PdfPCell(
+            new Phrase(v == null ? "-" : String.format("%.2f %%", v))
+        );
+        c.setHorizontalAlignment(Element.ALIGN_CENTER);
+        
+        if (v != null) {
+            c.setBackgroundColor(v >= 60 ? new Color(200,255,200) : new Color(255,200,200));
+        }
+        return c;
+    }
+
+    private PdfPCell cellDecision(Resultat r) {
+        PdfPCell c = new PdfPCell(
+            new Phrase(r.isAdmis() ? "ADMIS" : "AJOURNÉ")
+        );
+        c.setHorizontalAlignment(Element.ALIGN_CENTER);
+        return c;
     }
 
     private String val(Double d) {
@@ -227,22 +306,26 @@ public class ResultatPdfExporter {
     }
 
     private void headers(PdfPTable t, String... h) {
-        Stream.of(h).forEach(x -> {
-            PdfPCell c = new PdfPCell(new Phrase(x, FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+        for (String x : h) {
+            PdfPCell c = new PdfPCell(
+                new Phrase(x, FontFactory.getFont(FontFactory.HELVETICA_BOLD))
+            );
             c.setBackgroundColor(Color.LIGHT_GRAY);
             c.setHorizontalAlignment(Element.ALIGN_CENTER);
             t.addCell(c);
-        });
+        }
     }
 
     private Paragraph sectionTitle(String t) {
-        Paragraph p = new Paragraph(t, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14));
-        p.setSpacingAfter(5);
+        Paragraph p = new Paragraph(
+            t, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14)
+        );
+        p.setSpacingAfter(6);
         return p;
     }
 
     // =========================================================
-    // =================== STATS + PREMIER =====================
+    // =================== STATS ===============================
     // =========================================================
 
     private void ajouterStatistiquesClasse(Document doc, List<Resultat> rs)
@@ -252,16 +335,17 @@ public class ResultatPdfExporter {
             .map(Resultat::getMoyenneGenerale)
             .filter(x -> x != null)
             .mapToDouble(Double::doubleValue)
-            .average().orElse(0);
+            .average()
+            .orElse(0);
 
         Resultat premier = rs.stream()
             .filter(r -> r.getMoyenneGenerale() != null)
             .max(Comparator.comparing(Resultat::getMoyenneGenerale))
             .orElse(null);
 
-        doc.add(new Paragraph("Moyenne de la classe : " + String.format("%.2f %%", moyClasse)));
-        doc.add(new Paragraph("Taux de réussite : " +
-            (rs.stream().filter(Resultat::isAdmis).count() * 100 / rs.size()) + " %"));
+        doc.add(new Paragraph(
+            "Moyenne de la classe : " + String.format("%.2f %%", moyClasse)
+        ));
 
         if (premier != null) {
             doc.add(new Paragraph(
@@ -282,12 +366,12 @@ public class ResultatPdfExporter {
         PdfPTable t = new PdfPTable(2);
         t.setWidthPercentage(100);
 
-        PdfPCell c1 = new PdfPCell(new Phrase(
-            "Responsable pédagogique\n\nSignature : ______________"
-        ));
-        PdfPCell c2 = new PdfPCell(new Phrase(
-            "Direction FLCS\n\nSignature : ______________"
-        ));
+        PdfPCell c1 = new PdfPCell(
+            new Phrase("Responsable pédagogique\n\nSignature : ______________")
+        );
+        PdfPCell c2 = new PdfPCell(
+            new Phrase("Direction FLCS\n\nSignature : ______________")
+        );
 
         c1.setBorder(Rectangle.NO_BORDER);
         c2.setBorder(Rectangle.NO_BORDER);
@@ -298,3 +382,4 @@ public class ResultatPdfExporter {
         doc.add(t);
     }
 }
+
