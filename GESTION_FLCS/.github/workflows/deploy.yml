@@ -1,0 +1,25 @@
+name: CI/CD Backend FLCS
+
+on:
+  push:
+    branches: [ deploy ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Deploiement sur Contabo via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/backend/GESTION_FLCS
+            git pull origin main
+            mvn clean package -DskipTests
+            pm2 restart flcs-backend || pm2 start java --name "flcs-backend" -- -jar target/demo-0.0.1-SNAPSHOT.jar
+            pm2 save
