@@ -32,26 +32,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Activation du CORS avec la configuration définie plus bas
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // 2. Désactivation du CSRF (nécessaire pour les APIs REST stateless)
             .csrf(csrf -> csrf.disable())
-            
-            // 3. Gestion des autorisations
             .authorizeHttpRequests(auth -> auth
-                // Si tu veux rendre les listes publiques, décommente les lignes suivantes :
-                // .requestMatchers("/api/partenaires/**").permitAll()
-                // .requestMatchers("/api/rentrees/**").permitAll()
+                // CETTE LIGNE EST LA CLÉ :
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
+                
                 .anyRequest().authenticated()
             )
-            
-            // 4. Authentification Basic (pour ton admin:admin123)
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
