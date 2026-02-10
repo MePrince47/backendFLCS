@@ -68,25 +68,47 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
-
-   @Bean
+@Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
+    
+    // 1. Autorise les credentials (cookies, auth basic)
     config.setAllowCredentials(true);
     
-    // On met explicitement tes domaines sans wildcard pour éviter les erreurs de parsing
+    // 2. Origines statiques (ne pas utiliser "*" si allowCredentials est true)
     config.setAllowedOrigins(Arrays.asList(
         "https://www.flcs-center.com",
         "https://flcs-center.com",
         "http://localhost:4200"
     ));
     
-    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
-    config.setExposedHeaders(Arrays.asList("Authorization"));
+    // 3. Méthodes autorisées
+    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    
+    // 4. Headers autorisés (ceux que le navigateur a le droit d'envoyer)
+    config.setAllowedHeaders(Arrays.asList(
+        "Authorization",
+        "Content-Type",
+        "Accept",
+        "Origin",
+        "X-Requested-With",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+    ));
+    
+    // 5. Headers exposés (ceux que le front-end a le droit de lire)
+    config.setExposedHeaders(Arrays.asList(
+        "Authorization", 
+        "Content-Type"
+    ));
+
+    // 6. Cache des requêtes OPTIONS (Preflight) pour 1 heure
     config.setMaxAge(3600L);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config); // On applique à TOUTES les routes
+    source.registerCorsConfiguration("/**", config); 
     return source;
-}}
+}
+
+
+}
