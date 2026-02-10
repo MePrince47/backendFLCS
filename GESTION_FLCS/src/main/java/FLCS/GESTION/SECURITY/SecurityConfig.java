@@ -60,8 +60,13 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // obligatoire pour Basic Auth
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        config.setAllowCredentials(true); 
+        // Ajoute tes domaines de production ici !
+        config.setAllowedOrigins(Arrays.asList(
+            "http://localhost:4200",
+            "https://flcs-center.com",
+            "https://www.flcs-center.com"
+        ));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
 
