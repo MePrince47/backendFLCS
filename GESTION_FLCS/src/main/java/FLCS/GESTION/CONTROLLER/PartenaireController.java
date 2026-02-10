@@ -34,7 +34,6 @@ public class PartenaireController {
         description = "Permet d’enregistrer un nouveau partenaire"
     )
     @ApiResponse(responseCode = "201", description = "Partenaire créé")
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PartenaireResponse> create(
             @RequestBody PartenaireRequest request) {

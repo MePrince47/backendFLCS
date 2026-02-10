@@ -17,17 +17,17 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.repo = repo;
     }
 
-  @Override
-public UserDetails loadUserByUsername(String username) {
+    @Override
+    public UserDetails loadUserByUsername(String username) {
 
-    Utilisateur user = repo.findByUsername(username)
-       .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
+        Utilisateur user = repo.findByUsername(username)
+           .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
 
-    return new org.springframework.security.core.userdetails.User(
-        user.getUsername(),
-        user.getPassword(),
-        List.of(new SimpleGrantedAuthority("ROLE_USER")) // tout le monde a ce rôle
-    );
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(),
+            user.getPassword(),
+            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
 }
 
 }
