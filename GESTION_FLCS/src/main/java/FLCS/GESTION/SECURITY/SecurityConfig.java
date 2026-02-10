@@ -1,9 +1,10 @@
 package FLCS.GESTION.SECURITY;
 
 import java.util.Arrays;
+import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod; // Indispensable pour OPTIONS
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -35,25 +36,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Appliquer la config CORS définie plus bas
+            // 1. CORS en premier !
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 2. DÉSACTIVER LE CSRF (C'est ce qui bloque tes POST en 403)
+            // 2. Désactivation du CSRF (Indispensable pour les POST API)
             .csrf(csrf -> csrf.disable()) 
             
-            // 3. Gestion des autorisations
+            // 3. Autorisations
             .authorizeHttpRequests(auth -> auth
-                // Autoriser les requêtes "Preflight" (OPTIONS) du navigateur sans login
+                // On autorise TOUTES les requêtes OPTIONS sans authentification
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                
-                // Si tu as des routes d'auth publiques (ex: login), ajoute-les ici :
-                // .requestMatchers("/api/auth/**").permitAll()
-                
-                // Tout le reste demande d'être connecté
+                // On laisse passer l'accès aux ressources statiques si besoin
                 .anyRequest().authenticated()
             )
             
-            // 4. Activer le Basic Auth (ton login:password envoyé par Angular)
+            // 4. Authentification Basic
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -71,25 +68,25 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         
+        // Autorise les credentials (nécessaire pour le header Authorization)
         config.setAllowCredentials(true); 
         
-        // Origines autorisées (Frontend)
-        config.setAllowedOrigins(Arrays.asList(
-            "http://localhost:4200",
+        // Utilisation de OriginPatterns (plus souple pour matcher www et non-www)
+        config.setAllowedOriginPatterns(Arrays.asList(
+            "https://www.flcs-center.com",
             "https://flcs-center.com",
-            "https://www.flcs-center.com"
+            "http://localhost:4200"
         ));
         
-        // Headers autorisés (Authorization est crucial pour ton Basic Auth)
-        config.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "X-Requested-With",
-            "Accept",
-            "Origin"
-        ));
+        // On autorise TOUS les headers pour éviter le "Invalid CORS request"
+        config.setAllowedHeaders(Arrays.asList("*"));
         
+        // Méthodes autorisées
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        // Exposer le header Authorization pour Angular
+        config.setExposedHeaders(Collections.singletonList("Authorization"));
+        
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
