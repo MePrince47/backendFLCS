@@ -39,10 +39,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable()) 
         .authorizeHttpRequests(auth -> auth
-            // CETTE LIGNE AUTORISE TOUT LE MONDE SUR TOUTES LES ROUTES
+            // CETTE LIGNE AUTORISE TOUT LE MONDE SUR TOUTES LES ROUTES ( CaR il faut ça absolument pour l'auth)
             .anyRequest().permitAll() 
         )
-        // On peut même commenter ou supprimer httpBasic si on veut être libre à 100%
+        
         .httpBasic(Customizer.withDefaults());
 
     return http.build();
