@@ -33,29 +33,25 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            // 1. CORS en premier !
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // 2. Désactivation du CSRF (Indispensable pour les POST API)
-            .csrf(csrf -> csrf.disable()) 
-            
-            // 3. Autorisations
-            .authorizeHttpRequests(auth -> auth
-                // On autorise TOUTES les requêtes OPTIONS sans authentification
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                // On laisse passer l'accès aux ressources statiques si besoin
-                .anyRequest().authenticated()
-            )
-            
-            // 4. Authentification Basic
-            .httpBasic(Customizer.withDefaults());
+   @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        // 1. On garde le CORS pour que le navigateur ne bloque pas
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        
+        // 2. On désactive le CSRF (obligatoire pour les POST)
+        .csrf(csrf -> csrf.disable()) 
+        
+        // 3. ON AUTORISE TOUT SANS AUTHENTIFICATION
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().permitAll() 
+        )
+        
+        // On désactive ou commente le Basic Auth pour être sûr
+        .httpBasic(basic -> basic.disable());
 
-        return http.build();
-    }
-
+    return http.build();
+}
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -64,33 +60,25 @@ public class SecurityConfig {
         return provider;
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        
-        // Autorise les credentials (nécessaire pour le header Authorization)
-        config.setAllowCredentials(true); 
-        
-        // Utilisation de OriginPatterns (plus souple pour matcher www et non-www)
-        config.setAllowedOriginPatterns(Arrays.asList(
-            "https://www.flcs-center.com",
-            "https://flcs-center.com",
-            "http://localhost:4200"
-        ));
-        
-        // On autorise TOUS les headers pour éviter le "Invalid CORS request"
-        config.setAllowedHeaders(Arrays.asList("*"));
-        
-        // Méthodes autorisées
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        
-        // Exposer le header Authorization pour Angular
-        config.setExposedHeaders(Collections.singletonList("Authorization"));
-        
-        config.setMaxAge(3600L);
+   @Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowCredentials(true);
+    
+    // On met explicitement tes domaines sans wildcard pour éviter les erreurs de parsing
+    config.setAllowedOrigins(Arrays.asList(
+        "https://www.flcs-center.com",
+        "https://flcs-center.com",
+        "http://localhost:4200"
+    ));
+    
+    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
+    config.setExposedHeaders(Arrays.asList("Authorization"));
+    config.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config); // On applique à TOUTES les routes
+    return source;
+}
 }
