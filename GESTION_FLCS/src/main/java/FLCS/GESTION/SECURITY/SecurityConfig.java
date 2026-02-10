@@ -33,35 +33,37 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            // 1. CORS en premier !
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+   @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        // 1. CORS
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        
+        // 2. Désactivation du CSRF
+        .csrf(csrf -> csrf.disable()) 
+        
+        // 3. Autorisations
+        .authorizeHttpRequests(auth -> auth
+            // Toujours laisser passer les requêtes OPTIONS (CORS)
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
             
-            // 2. Désactivation du CSRF
-            .csrf(csrf -> csrf.disable()) 
+            // --- ACCÈS PUBLIC ---
+            // N'importe qui peut voir ces listes sans être connecté
+            .requestMatchers("/api/niveaux/**").permitAll()
+            .requestMatchers("/api/rentrees/**").permitAll()
+            .requestMatchers("/api/partenaires/**").permitAll()
             
-            // 3. Autorisations
-            .authorizeHttpRequests(auth -> auth
-                // Autoriser les requêtes de pré-vérification du navigateur
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                
-                // --- ACCÈS PUBLIC (Tout le monde peut voir) ---
-                .requestMatchers("/api/niveaux/**").permitAll()
-                .requestMatchers("/api/rentrees/**").permitAll()
-                .requestMatchers("/api/partenaires/**").permitAll()
-                
-                // --- ACCÈS ADMIN (Tout le reste) ---
-                .anyRequest().authenticated()
-            )
-            
-            // 4. Authentification Basic
-            .httpBasic(Customizer.withDefaults());
+            // --- ACCÈS SÉCURISÉ (Tes 3 rôles) ---
+            // Pour tout le reste, il faut être connecté avec l'un de ces rôles
+            .anyRequest().hasAnyAuthority("ADMIN", "SECRETAIRE", "ENSEIGNANT")
+        )
+        
+        // 4. Authentification Basic
+        .httpBasic(Customizer.withDefaults());
 
-        return http.build();
-    }
-    @Bean
+    return http.build();
+}
+  @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
