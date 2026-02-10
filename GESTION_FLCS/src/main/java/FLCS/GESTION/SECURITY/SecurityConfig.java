@@ -33,20 +33,26 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             // 1. CORS en premier !
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 2. Désactivation du CSRF (Indispensable pour les POST API)
+            // 2. Désactivation du CSRF
             .csrf(csrf -> csrf.disable()) 
             
             // 3. Autorisations
             .authorizeHttpRequests(auth -> auth
-                // On autorise TOUTES les requêtes OPTIONS sans authentification
+                // Autoriser les requêtes de pré-vérification du navigateur
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                // On laisse passer l'accès aux ressources statiques si besoin
+                
+                // --- ACCÈS PUBLIC (Tout le monde peut voir) ---
+                .requestMatchers("/api/niveaux/**").permitAll()
+                .requestMatchers("/api/rentrees/**").permitAll()
+                .requestMatchers("/api/partenaires/**").permitAll()
+                
+                // --- ACCÈS ADMIN (Tout le reste) ---
                 .anyRequest().authenticated()
             )
             
@@ -55,7 +61,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
