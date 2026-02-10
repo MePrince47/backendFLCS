@@ -6,7 +6,6 @@ import FLCS.GESTION.DTO.NiveauResponse;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +31,7 @@ public class NiveauController {
     // Création d'un niveau (indépendant)
     @Operation(
         summary = "Créer un niveau académique indépendant",
-        description = "Permet à l'administrateur de créer un nouveau niveau (B2_mischung, C1)"
+        description = "Permet de créer un nouveau niveau (B2_mischung, C1)"
     )
     @ApiResponse(responseCode = "200", description = "Niveau créé avec succès")
     @PostMapping
