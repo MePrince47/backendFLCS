@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,48 +30,30 @@ public class EleveController {
         this.eleveService = eleveService;
     }
 
-    @Operation(
-        summary = "Inscrire un élève",
-        description = "Permet d’inscrire un nouvel élève dans le système scolaire"
-    )
+    @Operation(summary = "Inscrire un élève")
     @ApiResponse(responseCode = "201", description = "Élève inscrit avec succès")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
-    public ResponseEntity<EleveResponse> create(
-            @Valid @RequestBody EleveRequest request) {
+    public ResponseEntity<EleveResponse> create(@Valid @RequestBody EleveRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eleveService.create(request));
     }
 
-    @Operation(
-        summary = "Lister tous les élèves",
-        description = "Retourne la liste complète des élèves enregistrés"
-    )
+    @Operation(summary = "Lister tous les élèves")
     @ApiResponse(responseCode = "200", description = "Liste des élèves")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping
     public List<EleveResponse> getAll() {
         return eleveService.getAll();
     }
 
-    @Operation(
-        summary = "Consulter un élève",
-        description = "Retourne les informations détaillées d’un élève par son identifiant"
-    )
+    @Operation(summary = "Consulter un élève")
     @ApiResponse(responseCode = "200", description = "Élève trouvé")
-    @ApiResponse(responseCode = "404", description = "Élève introuvable")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping("/{id}")
     public EleveResponse getById(@PathVariable Long id) {
         return eleveService.getById(id);
     }
 
-    @Operation(
-        summary = "Modifier un élève",
-        description = "Met à jour les informations administratives d’un élève"
-    )
+    @Operation(summary = "Modifier un élève")
     @ApiResponse(responseCode = "200", description = "Élève mis à jour")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PutMapping("/{id}")
     public ResponseEntity<EleveResponse> update(
             @PathVariable Long id,
@@ -81,24 +62,14 @@ public class EleveController {
         return ResponseEntity.ok(eleveService.update(id, request));
     }
 
-
-    @Operation(
-        summary = "Supprimer un élève",
-        description = "Supprime définitivement un élève du système"
-    )
+    @Operation(summary = "Supprimer un élève")
     @ApiResponse(responseCode = "204", description = "Élève supprimé")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         eleveService.delete(id);
     }
 
-    @Operation(
-        summary = "Recherche avancée d’élèves",
-        description = "Recherche multicritère : nom, niveau scolaire, rentrée, langue, partenaire"
-    )
-    @ApiResponse(responseCode = "200", description = "Résultat de la recherche")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
+    @Operation(summary = "Recherche avancée d’élèves")
     @GetMapping("/search")
     public ResponseEntity<SearchResponse<EleveResponse>> rechercheAvancee(
             @RequestParam(required = false) String nom,
@@ -114,28 +85,15 @@ public class EleveController {
         );
     }
 
-    @Operation(
-        summary = "Recherche avancée d’élèves",
-        description = "Recherche multicritère : nom, niveau scolaire, rentrée, langue, partenaire"
-    )
-    @ApiResponse(responseCode = "200", description = "Résultat de la recherche")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
+    @Operation(summary = "Lister les élèves par niveau")
     @GetMapping("/niveau/{niveauId}")
     public List<EleveResponse> getByNiveau(@PathVariable Long niveauId) {
         return eleveService.getByNiveau(niveauId);
     }
 
-    @Operation(
-        summary = "Lister les élèves d’une rentrée",
-        description = "Retourne tous les élèves associés à une rentrée scolaire"
-    )
-    @ApiResponse(responseCode = "200", description = "Liste des élèves de la rentrée")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
+    @Operation(summary = "Lister les élèves d’une rentrée")
     @GetMapping("/rentree/{rentreeId}")
     public List<EleveResponse> getByRentree(@PathVariable Long rentreeId) {
         return eleveService.getByRentree(rentreeId);
     }
-
-
-
 }

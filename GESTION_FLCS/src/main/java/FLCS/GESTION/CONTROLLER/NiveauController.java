@@ -35,7 +35,6 @@ public class NiveauController {
         description = "Permet à l'administrateur de créer un nouveau niveau (B2_mischung, C1)"
     )
     @ApiResponse(responseCode = "200", description = "Niveau créé avec succès")
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<NiveauResponse> creer(
             @Valid @RequestBody Niveau niveau
@@ -49,7 +48,6 @@ public class NiveauController {
         description = "Retourne l’ensemble des niveaux enregistrés dans le système"
     )
     @ApiResponse(responseCode = "200", description = "Liste des niveaux")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping
     public ResponseEntity<List<NiveauResponse>> lister() {
         return ResponseEntity.ok(service.lister());
@@ -61,7 +59,6 @@ public class NiveauController {
         description = "Retourne les niveaux qui ne sont pas liés à une promotion"
     )
     @ApiResponse(responseCode = "200", description = "Liste des niveaux indépendants")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping("/independants")
     public ResponseEntity<List<NiveauResponse>> independants() {
         return ResponseEntity.ok(service.listerNiveauxIndependants());
@@ -74,7 +71,6 @@ public class NiveauController {
     )
     @ApiResponse(responseCode = "200", description = "Niveau trouvé")
     @ApiResponse(responseCode = "404", description = "Niveau inexistant")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping("/{id}")
     public ResponseEntity<NiveauResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));

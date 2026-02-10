@@ -36,7 +36,6 @@ public class NoteHebdoController {
         description = "Permet de saisir la note d’un élève pour une semaine donnée"
     )
     @ApiResponse(responseCode = "200", description = "Note enregistrée")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<NoteResponse> creer(
             @Valid @RequestBody NoteHebdoRequest request
@@ -50,8 +49,6 @@ public class NoteHebdoController {
         description = "Modifie la note hebdomadaire d’un élève pour une évaluation donnée"
     )
     @ApiResponse(responseCode = "200", description = "Note modifiée")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
-    @PutMapping("/eleve/{eleveId}/evaluation/{evaluationHebdoId}")
     public ResponseEntity<NoteResponse> modifier(
             @PathVariable Long eleveId,
             @PathVariable Long evaluationHebdoId,
@@ -73,7 +70,6 @@ public class NoteHebdoController {
         description = "Retourne toutes les notes hebdomadaires d’un niveau"
     )
     @ApiResponse(responseCode = "200", description = "Liste des notes")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','ADMIN')")
     @GetMapping("/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParNiveau(
             @PathVariable Long niveauId
@@ -87,7 +83,7 @@ public class NoteHebdoController {
         description = "Retourne les notes d’un niveau pour une semaine précise"
     )
     @ApiResponse(responseCode = "200", description = "Notes de la semaine")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
+
     @GetMapping("/niveau/{niveauId}/semaine/{semaine}")
     public ResponseEntity<List<NoteResponse>> lireParNiveauEtSemaine(
             @PathVariable Long niveauId,
@@ -104,7 +100,7 @@ public class NoteHebdoController {
         description = "Retourne toutes les notes hebdomadaires d’un élève pour un niveau"
     )
     @ApiResponse(responseCode = "200", description = "Notes de l’élève")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
+
     @GetMapping("/eleve/{eleveId}/niveau/{niveauId}")
     public ResponseEntity<List<NoteResponse>> lireParEleveEtNiveau(
             @PathVariable Long eleveId,

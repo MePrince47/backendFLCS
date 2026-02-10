@@ -46,7 +46,7 @@ public class NoteSoutenanceController {
     @ApiResponse(responseCode = "201", description = "Note enregistrée avec succès")
     @ApiResponse(responseCode = "400", description = "Données invalides")
     @ApiResponse(responseCode = "409", description = "Note déjà existante")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
+    
     @PostMapping
     public ResponseEntity<NoteSoutenanceResponse> attribuer(
         @Valid @RequestBody NoteSoutenanceRequest request
@@ -68,7 +68,6 @@ public class NoteSoutenanceController {
     )
     @ApiResponse(responseCode = "200", description = "Note trouvée")
     @ApiResponse(responseCode = "404", description = "Note inexistante")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping("/eleve/{eleveId}/niveau/{niveauId}")
     public NoteSoutenanceResponse consulter(
         @PathVariable Long eleveId,

@@ -1,19 +1,16 @@
 package FLCS.GESTION.CONTROLLER;
 
 import FLCS.GESTION.SERVICE.EndprufungService;
-
 import FLCS.GESTION.DTO.EndprufungResponse; 
 import FLCS.GESTION.DTO.EndprufungRequest; 
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 
 @Tag(
     name = "Examens finaux (Endprüfung)",
@@ -35,7 +32,6 @@ public class EndprufungController {
         description = "Crée l’examen final (Endprüfung) pour un niveau donné"
     )
     @ApiResponse(responseCode = "200", description = "Examen créé avec succès")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<EndprufungResponse> creer(
             @RequestBody @Valid EndprufungRequest request
@@ -50,7 +46,6 @@ public class EndprufungController {
     )
     @ApiResponse(responseCode = "200", description = "Examen trouvé")
     @ApiResponse(responseCode = "404", description = "Examen inexistant")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT','SECRETAIRE','ADMIN')")
     @GetMapping("/niveau/{niveauId}")
     public ResponseEntity<EndprufungResponse> lireParNiveau(
             @PathVariable Long niveauId
@@ -58,4 +53,3 @@ public class EndprufungController {
         return ResponseEntity.ok(service.getByNiveau(niveauId));
     }
 }
-

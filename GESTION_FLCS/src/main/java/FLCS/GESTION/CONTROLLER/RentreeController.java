@@ -49,7 +49,6 @@ public class RentreeController {
         description = "Retourne la liste des années scolaires disponibles"
     )
     @ApiResponse(responseCode = "200", description = "Liste des rentrées")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping
     public ResponseEntity<List<RentreeResponse>> lister() {
         return ResponseEntity.ok(service.lister());
@@ -62,7 +61,6 @@ public class RentreeController {
     )
     @ApiResponse(responseCode = "200", description = "Rentrée trouvée")
     @ApiResponse(responseCode = "404", description = "Rentrée inexistante")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE','ENSEIGNANT')")
     @GetMapping("/{id}")
     public ResponseEntity<RentreeResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));

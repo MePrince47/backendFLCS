@@ -45,7 +45,6 @@ public class PaiementController {
         description = "Permet d’enregistrer un paiement pour un élève"
     )
     @ApiResponse(responseCode = "201", description = "Paiement enregistré avec succès")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @PostMapping
     public ResponseEntity<PaiementResponse> create(
             @RequestBody PaiementRequest request) {
@@ -59,7 +58,6 @@ public class PaiementController {
         description = "Retourne tous les paiements effectués par un élève"
     )
     @ApiResponse(responseCode = "200", description = "Liste des paiements")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleve/{eleveId}")
     public List<PaiementResponse> getByEleve(@PathVariable Long eleveId) {
         return paiementService.getByEleve(eleveId);
@@ -71,7 +69,6 @@ public class PaiementController {
         description = "Retourne la situation financière globale d’un élève (montant total, payé, restant)"
     )
     @ApiResponse(responseCode = "200", description = "Résumé financier")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleves/{id}/resume")
     public PaiementResumeResponse resumePaiement(@PathVariable Long id) {
         return paiementService.getResumePaiement(id);
@@ -83,7 +80,6 @@ public class PaiementController {
         description = "Retourne la situation financière globale de tous les élèves (montant total, payé, restant)"
     )
     @ApiResponse(responseCode = "200", description = "Résumé financier")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleves/resume")
     public List<PaiementResumeResponse> getResumePaiementsTousEleves() {
         return paiementService.getResumePaiementsTousEleves();
@@ -95,7 +91,6 @@ public class PaiementController {
         description = "Retourne l’historique détaillé des paiements d’un élève"
     )
     @ApiResponse(responseCode = "200", description = "Historique des paiements")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping("/eleves/{id}/paiements")
     public List<PaiementHistoriqueResponse> historique(@PathVariable Long id) {
         return paiementService.historique(id);
@@ -107,7 +102,6 @@ public class PaiementController {
         description = "Génère un document PDF officiel des paiements d’un élève"
     )
     @ApiResponse(responseCode = "200", description = "PDF généré")
-    @PreAuthorize("hasAnyRole('ADMIN','SECRETAIRE')")
     @GetMapping(
         value = "/paiements/export/pdf/{eleveId}",
         produces = MediaType.APPLICATION_PDF_VALUE
