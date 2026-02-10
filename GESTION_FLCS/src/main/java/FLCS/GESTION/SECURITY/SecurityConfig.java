@@ -33,25 +33,29 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-   @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        // 1. On garde le CORS pour que le navigateur ne bloque pas
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        
-        // 2. On désactive le CSRF (obligatoire pour les POST)
-        .csrf(csrf -> csrf.disable()) 
-        
-        // 3. ON AUTORISE TOUT SANS AUTHENTIFICATION
-        .authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll() 
-        )
-        
-        // On désactive ou commente le Basic Auth pour être sûr
-        .httpBasic(basic -> basic.disable());
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // 1. CORS en premier !
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
+            // 2. Désactivation du CSRF (Indispensable pour les POST API)
+            .csrf(csrf -> csrf.disable()) 
+            
+            // 3. Autorisations
+            .authorizeHttpRequests(auth -> auth
+                // On autorise TOUTES les requêtes OPTIONS sans authentification
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
+                // On laisse passer l'accès aux ressources statiques si besoin
+                .anyRequest().authenticated()
+            )
+            
+            // 4. Authentification Basic
+            .httpBasic(Customizer.withDefaults());
 
-    return http.build();
-}
+        return http.build();
+    }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -80,5 +84,4 @@ public CorsConfigurationSource corsConfigurationSource() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config); // On applique à TOUTES les routes
     return source;
-}
-}
+}}
