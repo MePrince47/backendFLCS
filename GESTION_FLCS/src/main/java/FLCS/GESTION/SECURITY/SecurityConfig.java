@@ -39,14 +39,20 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable()) 
         .authorizeHttpRequests(auth -> auth
-            // CETTE LIGNE AUTORISE TOUT LE MONDE SUR TOUTES LES ROUTES ( CaR il faut ça absolument pour l'auth)
+            // On autorise explicitement les patterns statiques de Swagger au cas où
+            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
             .anyRequest().permitAll() 
         )
+        // Désactive temporairement httpBasic si tu ne veux aucune demande de login
+        // .httpBasic(Customizer.withDefaults()); 
         
-        .httpBasic(Customizer.withDefaults());
+        // Optionnel : autoriser les frames pour la console H2 si tu l'utilises
+        .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
     return http.build();
-}  @Bean
+}
+
+@Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);

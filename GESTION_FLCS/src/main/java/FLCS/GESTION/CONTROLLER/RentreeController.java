@@ -35,7 +35,6 @@ public class RentreeController {
         description = "Crée une nouvelle année scolaire (ex: SEPTEMBRE 2024)"
     )
     @ApiResponse(responseCode = "200", description = "Rentrée créée avec succès")
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Rentree> creer(
             @Valid @RequestBody Rentree rentree
